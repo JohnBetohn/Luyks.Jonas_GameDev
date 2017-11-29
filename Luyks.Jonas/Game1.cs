@@ -12,6 +12,8 @@ namespace Luyks.Jonas
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        private Texture2D Ed;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,6 +43,7 @@ namespace Luyks.Jonas
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            Ed = Content.Load<Texture2D>("Ed");
         }
 
         /// <summary>
@@ -76,7 +79,10 @@ namespace Luyks.Jonas
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            spriteBatch.Draw(Ed, new Vector2(0, 0), Color.White);
+            spriteBatch.End();
+            
             base.Draw(gameTime);
         }
     }
