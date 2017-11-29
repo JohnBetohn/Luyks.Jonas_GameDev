@@ -12,7 +12,8 @@ namespace Luyks.Jonas
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        private Texture2D Ed;
+        //Initialize Objects
+        private Player player = new Player();
 
         public Game1()
         {
@@ -43,7 +44,7 @@ namespace Luyks.Jonas
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            Ed = Content.Load<Texture2D>("Ed");
+            player.EdTexture = Content.Load<Texture2D>("Ed");
         }
 
         /// <summary>
@@ -66,6 +67,8 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
+            player.CkeckInputs();
+            player.Move();
 
             base.Update(gameTime);
         }
@@ -80,7 +83,8 @@ namespace Luyks.Jonas
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.Draw(Ed, new Vector2(0, 0), Color.White);
+            Rectangle sprite = new Rectangle(10, 125, 45, 60);
+            spriteBatch.Draw(player.EdTexture, new Vector2(player.X, 250), sprite, Color.White);
             spriteBatch.End();
             
             base.Draw(gameTime);
