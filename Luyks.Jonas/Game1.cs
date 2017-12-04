@@ -68,7 +68,7 @@ namespace Luyks.Jonas
 
             // TODO: Add your update logic here
             player.CkeckInputs();
-            player.Move();
+            player.Move(gameTime);
 
             base.Update(gameTime);
         }
@@ -83,10 +83,11 @@ namespace Luyks.Jonas
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            Rectangle sprite = new Rectangle(10, 125, 45, 60);
-            spriteBatch.Draw(player.EdTexture, new Vector2(player.X, 250), sprite, Color.White);
+
+            player.Draw(spriteBatch);
+
             spriteBatch.End();
-            
+
             base.Draw(gameTime);
         }
     }

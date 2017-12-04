@@ -11,7 +11,7 @@ namespace Luyks.Jonas
     {
         private List<Animation_Frame> frames;
         public Animation_Frame CurrentFrame { get; set; }
-        public int AantalBewegingenPerSeconde { get; set; }
+        public int FramesPerSecond { get; set; }
 
         private int counter = 0;
 
@@ -23,7 +23,7 @@ namespace Luyks.Jonas
         public Animation()
         {
             frames = new List<Animation_Frame>();
-            AantalBewegingenPerSeconde = 1;
+            FramesPerSecond = 1;
         }
         public void AddFrame(Rectangle rectangle)
         {
@@ -46,7 +46,7 @@ namespace Luyks.Jonas
             double temp = CurrentFrame.SourceRectangle.Width * ((double)gameTime.ElapsedGameTime.Milliseconds / 1000);
 
             x += temp;
-            if (x >= CurrentFrame.SourceRectangle.Width / AantalBewegingenPerSeconde)
+            if (x >= CurrentFrame.SourceRectangle.Width / FramesPerSecond)
             {
                 Console.WriteLine(x);
                 x = 0;

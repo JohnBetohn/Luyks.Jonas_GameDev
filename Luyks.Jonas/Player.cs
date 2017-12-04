@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -35,39 +36,38 @@ namespace Luyks.Jonas
             set { y = value; }
         }
 
-        private int speedx;
-
-        public int Speedx
-        {
-            get { return speedx; }
-            set { speedx = value; }
-        }
-
-        private Animation run; //running animation
 
         #region Movement Properties
 
-        private bool moveLeft;
+        private bool walkLeft;
 
-        public bool MoveLeft
+        public bool WalkLeft
         {
-            get { return moveLeft; }
-            set { moveLeft = value; }
+            get { return walkLeft; }
+            set { walkLeft = value; }
         }
 
-        private bool moveRight;
+        private bool walkRight;
 
-        public bool MoveRight
+        public bool WalkRight
         {
-            get { return moveRight; }
-            set { moveRight = value; }
+            get { return walkRight; }
+            set { walkRight = value; }
+        }
+
+        private int walkspeedx = 5;
+
+        public int WalkSpeedx
+        {
+            get { return walkspeedx; }
+            set { walkspeedx = value; }
         }
 
         #endregion
 
         public Player()
         {
-            
+            initAnimations();
         }
         
         public void CkeckInputs()
@@ -75,11 +75,11 @@ namespace Luyks.Jonas
             KeyboardState stateKey = Keyboard.GetState();
             if (stateKey.IsKeyDown(Keys.Q))
             {
-                moveLeft = true;
+                walkLeft = true;
             }
             if (stateKey.IsKeyDown(Keys.D))
             {
-                moveRight = true;
+                walkRight = true;
             }
             //if (stateKey.IsKeyUp(Keys.Left))
             //{
@@ -97,16 +97,17 @@ namespace Luyks.Jonas
             //}
         }
 
-        public void Move()
+        public void Move(GameTime gameTime)
         {
-            if (moveLeft)
+            if (walkLeft)
             {
-                x = x - speedx;
+                x = x - walkspeedx;
             }
 
-            if (moveRight)
+            if (walkRight)
             {
-                x = x + speedx;
+                x = x + walkspeedx;
+                walk.Update(gameTime);
             }
 
             ResetMove();
@@ -114,8 +115,56 @@ namespace Luyks.Jonas
 
         public void ResetMove()
         {
-            moveRight = false;
-            moveLeft = false;
+            walkRight = false;
+            walkLeft = false;
+        }
+
+        #region Animations
+
+        private List<Animation> animations = new List<Animation>();
+
+        public List<Animation> Animations
+        {
+            get { return animations; }
+            set { animations = value; }
+        }
+
+
+        private Animation stance = new Animation();
+        private Animation turning = new Animation();
+        private Animation walk = new Animation();
+        private Animation walkslide = new Animation();
+        private Animation run = new Animation();
+        private Animation runslide = new Animation();
+        private Animation ladder = new Animation();
+        private Animation waiting = new Animation();
+        private Animation jump = new Animation();
+        private Animation falling = new Animation();
+        private Animation hardhitfloor = new Animation();
+        private Animation dizzy = new Animation();
+        private Animation gettingup = new Animation();
+        private Animation died = new Animation();
+        
+        protected void initAnimations()
+        {
+            walk.AddFrame(new Rectangle(11, 125, 44, 60));
+            walk.AddFrame(new Rectangle(55, 125, 49, 60));
+            walk.AddFrame(new Rectangle(104, 125, 55, 60));
+            walk.AddFrame(new Rectangle(159, 125, 49, 60));
+            walk.AddFrame(new Rectangle(208, 125, 48, 60));
+            walk.AddFrame(new Rectangle(256, 125, 43, 60));
+            walk.AddFrame(new Rectangle(299, 125, 44, 60));
+            walk.AddFrame(new Rectangle(343, 125, 45, 60));
+            walk.AddFrame(new Rectangle(392, 125, 42, 60));
+            walk.FramesPerSecond = 15;
+        }
+
+        #endregion
+
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(EdTexture, new Vector2(x, 250), walk.CurrentFrame.SourceRectangle, Color.White);
         }
 
     }
