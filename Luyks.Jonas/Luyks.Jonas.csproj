@@ -43,8 +43,15 @@
   <ItemGroup>
     <Compile Include="Animation_Frame.cs" />
     <Compile Include="Animation.cs" />
+    <Compile Include="ICollide.cs" />
+    <Compile Include="Level\Block.cs" />
+    <Compile Include="Characters\Character.cs" />
+    <Compile Include="Controls.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Level\Ladder.cs" />
+    <Compile Include="Level\Level.cs" />
+    <Compile Include="Level\LevelAsset.cs" />
+    <Compile Include="Characters\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -14,6 +14,14 @@ namespace Luyks.Jonas
 
         //Initialize Objects
         private Player player = new Player();
+        private Level level1 = new Level();
+        private Block floor0 = new Block(new Vector2(0, 400));
+        private Block floor1 = new Block(new Vector2(50, 400));
+        private Block floor2 = new Block(new Vector2(100, 400));
+        private Block floor3 = new Block(new Vector2(150, 400));
+        private Block floor4 = new Block(new Vector2(200, 400));
+        private Block floor5 = new Block(new Vector2(250, 400));
+        private Block[] floor;
 
         public Game1()
         {
@@ -30,6 +38,8 @@ namespace Luyks.Jonas
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            floor = new Block[] {floor0, floor1, floor2, floor3, floor4, floor5};
+            level1.Add(floor);
 
             base.Initialize();
         }
@@ -44,7 +54,12 @@ namespace Luyks.Jonas
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            player.EdTexture = Content.Load<Texture2D>("Ed");
+            player.texture = Content.Load<Texture2D>("Ed");   //Sprite from http://spritedatabase.net/file/2967/Ed
+            for (int i = 0; i < floor.Length; i++)
+            {
+                floor[i].Texture = Content.Load<Texture2D>("castleMID");
+            }
+            player.controls = new ControlsWASD();
         }
 
         /// <summary>
@@ -67,7 +82,6 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
-            player.CkeckInputs();
             player.Move(gameTime);
 
             base.Update(gameTime);
@@ -85,6 +99,7 @@ namespace Luyks.Jonas
             spriteBatch.Begin();
 
             player.Draw(spriteBatch);
+            level1.Draw(spriteBatch);
 
             spriteBatch.End();
 
