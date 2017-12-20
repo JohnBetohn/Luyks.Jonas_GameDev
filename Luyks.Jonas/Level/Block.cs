@@ -13,6 +13,7 @@ namespace Luyks.Jonas
         public Block(Vector2 position)
         {
             Position = position;
+            CollisionRectangle = new Rectangle((int)position.X, (int)position.Y , 50, 50);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

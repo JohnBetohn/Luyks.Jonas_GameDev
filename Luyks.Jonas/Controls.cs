@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace Luyks.Jonas
         public bool walkRight { get; set; }
         public bool runLeft { get; set; }
         public bool runRight { get; set; }
+        public bool Jump { get; set; }
+        public bool Falling { get; set; }
+        public double LastTouch { get; set; }
 
         public abstract void CheckInputs();
         public void ResetMove()
@@ -21,6 +25,7 @@ namespace Luyks.Jonas
             walkRight = false;
             runLeft = false;
             runRight = false;
+            Jump = false;
         }
     }
 
@@ -45,6 +50,10 @@ namespace Luyks.Jonas
             {
                 runRight = true;
             }
+            if (stateKey.IsKeyDown(Keys.Space) && !Falling)
+            {
+                Jump = true;
+            }
             if (stateKey.IsKeyUp(Keys.Q))
             {
                 walkLeft = false;
@@ -54,6 +63,10 @@ namespace Luyks.Jonas
             {
                 walkRight = false;
                 runRight = false;
+            }
+            if (stateKey.IsKeyUp(Keys.Space))
+            {
+                Jump = false;
             }
 
             if (walkLeft && walkRight || runLeft && runRight)

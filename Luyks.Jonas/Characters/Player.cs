@@ -2,27 +2,30 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    class Player : Character , ICollide
+    class Player : Character
     {
         //Properties
-        private Rectangle collisionRectangle;
+        private CollisionManager collManager;
 
-        public Rectangle CollisionRectangle
+        public CollisionManager CollManager
         {
-            get { return collisionRectangle; }
-            set { collisionRectangle = value; }
+            get { return collManager; }
+            set { collManager = value; }
         }
 
-        #region Movement Properties
 
-        public Controls controls { get; set; }
+        #region Movement
+
+        public Controls Controls { get; set; }
 
         private Vector2 position;
 
@@ -32,53 +35,120 @@ namespace Luyks.Jonas
             set { position = value; }
         }
 
+        public override void HandleCollision(GameTime gameTime)
+        {
+            Rectangle collidedV = CollManager.CheckCollisionVertical(CollisionRectangle);
+            Rectangle collidedH = CollManager.CheckCollsionHorizontal(CollisionRectangle);
+
+            if (CollManager.HasCollLeft)
+            {
+                position.X = collidedH.Right;
+            }
+
+            if (CollManager.HasCollRight)
+            {
+                position.X = collidedH.Left - CollisionRectangle.Width;
+            }
+
+            if (CollManager.HasCollTop)
+            {
+                position.Y = collidedV.Bottom;
+                SpeedY = 0;
+            }
+
+            if (CollManager.HasCollBot)
+            {
+                Controls.Falling = false;
+                position.Y = collidedV.Top - CollisionRectangle.Height;
+            }
+            
+            if (!CollManager.HasCollBot)
+            {
+                if (!Controls.Falling)
+                {
+                    Controls.LastTouch = gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                Controls.Falling = true;                
+            }
+        }
+
         #endregion
 
-        public Player()
+        public Player(Vector2 position)
         {
-            Position = new Vector2(10, 250);
-            walkSpeedx = 5;
-            runSpeedx = 10;
+            Position = position;
+            CollisionRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 60);
+            WalkSpeedx = 5;
+            RunSpeedx = 10;
+            SpeedY = 0;
+            FallSpeed = 1;
             initAnimations();
-            setActiveAnimation(0);
+            SetActiveAnimation(0);
         }
 
         public void Move(GameTime gameTime)
         {
-            controls.CheckInputs();
+            Controls.CheckInputs();
 
-            if (controls.walkLeft)
+            if (Controls.walkLeft)
             {
-                position.X = Position.X - walkSpeedx;
-                setActiveAnimation(2);
+                position.X = Position.X - WalkSpeedx;
+                SetActiveAnimation(2);
                 activeAnimation.Update(gameTime);
             }
 
-            if (controls.walkRight)
+            if (Controls.walkRight)
             {
-                position.X = Position.X + walkSpeedx;
-                setActiveAnimation(2);
+                position.X = Position.X + WalkSpeedx;
+                SetActiveAnimation(2);
                 activeAnimation.Update(gameTime);
             }
 
-            if (controls.runLeft)
+            if (Controls.runLeft)
             {
-                position.X = Position.X - runSpeedx;
-                setActiveAnimation(4);
+                position.X = Position.X - RunSpeedx;
+                SetActiveAnimation(4);
                 activeAnimation.Update(gameTime);
             }
 
-            if (controls.runRight)
+            if (Controls.runRight)
             {
-                position.X = Position.X + runSpeedx;
-                setActiveAnimation(4);
+                position.X = Position.X + RunSpeedx;
+                SetActiveAnimation(4);
                 activeAnimation.Update(gameTime);
             }
 
-            if (!controls.runRight && !controls.walkRight && !controls.runLeft && !controls.walkLeft)
+            if (Controls.Jump && !Controls.Falling && SpeedY != -15)
             {
-                setActiveAnimation(0);
+                SpeedY = -15;
+                position.Y = position.Y + SpeedY;
             }
+
+            if (Controls.Falling)
+            {
+                if (SpeedY < 15)
+                {
+                    SpeedY = SpeedY + FallSpeed;
+                }
+                position.Y = position.Y + SpeedY;
+            }
+
+            if (!Controls.Falling && SpeedY >= 0)
+            {
+                SpeedY = 0;
+            }
+
+            if (!Controls.runRight && !Controls.walkRight && !Controls.runLeft && !Controls.walkLeft)
+            {
+                SetActiveAnimation(0);
+            }
+
+            MoveCollisionRectangle();
+        }
+
+        public void MoveCollisionRectangle()
+        {
+            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, 50, 50);
         }
 
         #region Animations
@@ -105,7 +175,7 @@ namespace Luyks.Jonas
         private Animation dizzy = new Animation();
         private Animation gettingup = new Animation();
         private Animation died = new Animation();
-        
+
         protected void initAnimations()
         {
             animations.Add(stance);
@@ -156,7 +226,7 @@ namespace Luyks.Jonas
             set { activeAnimation = value; }
         }
 
-        public void setActiveAnimation(int x)
+        public void SetActiveAnimation(int x)
         {
             activeAnimation = animations[x];
         }
@@ -166,20 +236,15 @@ namespace Luyks.Jonas
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(controls.walkLeft || controls.runLeft)
+            if (Controls.walkLeft || Controls.runLeft)
             {
-                spriteBatch.Draw(texture, Position, null, activeAnimation.CurrentFrame.SourceRectangle, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                spriteBatch.Draw(Texture, Position, null, activeAnimation.CurrentFrame.SourceRectangle, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
             }
             else
             {
-                spriteBatch.Draw(texture, Position, activeAnimation.CurrentFrame.SourceRectangle, Color.White);
+                spriteBatch.Draw(Texture, Position, activeAnimation.CurrentFrame.SourceRectangle, Color.White);
             }
-                
-        }
 
-        public Rectangle GetCollisionRectangle()
-        {
-            return collisionRectangle;
         }
 
     }

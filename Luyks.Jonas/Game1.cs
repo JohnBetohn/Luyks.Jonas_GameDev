@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -13,15 +15,24 @@ namespace Luyks.Jonas
         SpriteBatch spriteBatch;
 
         //Initialize Objects
-        private Player player = new Player();
+        private Player player = new Player(new Vector2(70, 100));
         private Level level1 = new Level();
         private Block floor0 = new Block(new Vector2(0, 400));
         private Block floor1 = new Block(new Vector2(50, 400));
         private Block floor2 = new Block(new Vector2(100, 400));
         private Block floor3 = new Block(new Vector2(150, 400));
         private Block floor4 = new Block(new Vector2(200, 400));
-        private Block floor5 = new Block(new Vector2(250, 400));
-        private Block[] floor;
+        private Block floor5 = new Block(new Vector2(250, 250));
+        private Block floor6 = new Block(new Vector2(200, 250));
+        private Block floor7 = new Block(new Vector2(150, 250));
+        private Block floor8 = new Block(new Vector2(100, 250));
+        private List<Block> floor;
+
+        private Block wall0 = new Block(new Vector2(0, 350));
+        private Block wall1 = new Block(new Vector2(250, 350));
+        private List<Block> walls;
+
+        private CollisionManager collisionManager;
 
         public Game1()
         {
@@ -38,8 +49,13 @@ namespace Luyks.Jonas
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            floor = new Block[] {floor0, floor1, floor2, floor3, floor4, floor5};
+            floor = new List<Block> {floor0, floor1, floor2, floor3, floor4, floor5, floor6, floor7, floor8};
+            walls = new List<Block> {wall0, wall1};
             level1.Add(floor);
+            level1.Add(walls);
+
+            collisionManager = new CollisionManager(level1.getLevelCollision());
+            player.CollManager = collisionManager;
 
             base.Initialize();
         }
@@ -54,12 +70,22 @@ namespace Luyks.Jonas
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            player.texture = Content.Load<Texture2D>("Ed");   //Sprite from http://spritedatabase.net/file/2967/Ed
-            for (int i = 0; i < floor.Length; i++)
+            player.Texture = Content.Load<Texture2D>("Ed");   //Sprite from http://spritedatabase.net/file/2967/Ed
+
+            Texture2D floortexture = Content.Load<Texture2D>("castleMID");
+            Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
+
+            for (int i = 0; i < floor.Count; i++)
             {
-                floor[i].Texture = Content.Load<Texture2D>("castleMID");
+                floor[i].Texture = floortexture;
             }
-            player.controls = new ControlsWASD();
+
+            for (int i = 0; i < walls.Count; i++)
+            {
+                walls[i].Texture = walltexture;
+            }
+
+            player.Controls = new ControlsWASD();
         }
 
         /// <summary>
@@ -83,6 +109,8 @@ namespace Luyks.Jonas
 
             // TODO: Add your update logic here
             player.Move(gameTime);
+            player.HandleCollision(gameTime);
+            player.CollManager.ResetColl();
 
             base.Update(gameTime);
         }
