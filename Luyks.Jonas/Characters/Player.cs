@@ -144,7 +144,6 @@ namespace Luyks.Jonas
             if (Controls.Up && Controls.OnLadder)
             {
                 position.Y = position.Y - ClimbSpeed;
-                Console.WriteLine("Hello");
             }
 
             if (Controls.Down && Controls.OnLadder)
