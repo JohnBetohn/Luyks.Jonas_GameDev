@@ -13,17 +13,10 @@ namespace Luyks.Jonas
     {
         public Texture2D Texture { get; set; }
 
-        private Vector2 posiiton;
-
-        public Vector2 Position
-        {
-            get { return posiiton; }
-            set { posiiton = value; }
-        }
-
         public int WalkSpeedx { get; set; }
         public int RunSpeedx { get; set; }
         public int FallSpeed { get; set; }
+        public int ClimbSpeed { get; set; }
         public int SpeedY { get; set; }
         public Rectangle CollisionRectangle { get; set; }
 

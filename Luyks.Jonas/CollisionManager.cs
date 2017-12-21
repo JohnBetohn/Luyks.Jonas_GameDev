@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,17 +11,21 @@ namespace Luyks.Jonas
     class CollisionManager
     {
         public List<Rectangle> CollisionRectangles { get; set; }
+        public List<Ladder> Ladders { get; set; }
         public bool HasCollLeft { get; set; }
         public bool HasCollRight { get; set; }
         public bool HasCollBot { get; set; }
         public bool HasCollTop { get; set; }
-        public CollisionManager(List<Rectangle> collisionRectangles)
+        public CollisionManager(List<Rectangle> collisionRectangles, List<Ladder> ladders)
         {
             CollisionRectangles = new List<Rectangle>();
             for (int i = 0; i < collisionRectangles.Count; i++)
             {
                 this.CollisionRectangles.Add(collisionRectangles[i]);
             }
+
+            Ladders = ladders;
+
             ResetColl();
         }
 
@@ -65,9 +68,21 @@ namespace Luyks.Jonas
 
         }
 
+        public bool CheckLadder(Rectangle CollisionRectangle)
+        {
+            for (int i = 0; i < Ladders.Count; i++)
+            {
+                if (IsOnLadder(CollisionRectangle, Ladders[i].CollisionRectangle))
+                {
+                    return true;
+                }   
+            }
+            return false;
+        }
+
         public bool CollisionLeft(Rectangle OwnCollRect, Rectangle OtherCollRect)
         {
-            if (OwnCollRect.Left <= OtherCollRect.Right && OwnCollRect.Left >= OtherCollRect.Right - OtherCollRect.Width / 3 && OwnCollRect.Bottom >= OtherCollRect.Top + 5 && OwnCollRect.Top <= OtherCollRect.Bottom)
+            if (OwnCollRect.Left <= OtherCollRect.Right && OwnCollRect.Left >= OtherCollRect.Right - OtherCollRect.Width / 2 && OwnCollRect.Bottom >= OtherCollRect.Top + 5 && OwnCollRect.Top <= OtherCollRect.Bottom)
             {
                 return true;
             }
@@ -76,7 +91,7 @@ namespace Luyks.Jonas
 
         public bool CollisionRight(Rectangle OwnCollRect, Rectangle OtherCollRect)
         {
-            if (OwnCollRect.Right >= OtherCollRect.Left && OwnCollRect.Right <= OtherCollRect.Left + OtherCollRect.Width / 3 && OwnCollRect.Bottom >= OtherCollRect.Top + 5 && OwnCollRect.Top <= OtherCollRect.Bottom)
+            if (OwnCollRect.Right >= OtherCollRect.Left && OwnCollRect.Right <= OtherCollRect.Left + OtherCollRect.Width / 2 && OwnCollRect.Bottom >= OtherCollRect.Top + 5 && OwnCollRect.Top <= OtherCollRect.Bottom)
             {
                 return true;
             }
@@ -85,7 +100,7 @@ namespace Luyks.Jonas
 
         public bool CollisionTop(Rectangle OwnCollRect, Rectangle OtherCollRect)
         {
-            if (OwnCollRect.Top <= OtherCollRect.Bottom && OwnCollRect.Top >= OtherCollRect.Bottom - OtherCollRect.Height / 3 && OwnCollRect.Left <= OtherCollRect.Right /*- OtherCollRect.Width / 4*/ && OwnCollRect.Right >= OtherCollRect.Left /*+ OtherCollRect.Width / 4*/)
+            if (OwnCollRect.Top <= OtherCollRect.Bottom && OwnCollRect.Top >= OtherCollRect.Bottom - OtherCollRect.Height / 2 && OwnCollRect.Left <= OtherCollRect.Right && OwnCollRect.Right >= OtherCollRect.Left)
             {
                 return true;
             }
@@ -94,7 +109,16 @@ namespace Luyks.Jonas
 
         public bool CollisionBottom(Rectangle OwnCollRect, Rectangle OtherCollRect)
         {
-            if (OwnCollRect.Bottom >= OtherCollRect.Top && OwnCollRect.Bottom <= OtherCollRect.Top + OtherCollRect.Height / 3 && OwnCollRect.Left <= OtherCollRect.Right /*- OtherCollRect.Width / 4*/ && OwnCollRect.Right >= OtherCollRect.Left /*+ OtherCollRect.Width / 4*/)
+            if (OwnCollRect.Bottom >= OtherCollRect.Top && OwnCollRect.Bottom <= OtherCollRect.Top + OtherCollRect.Height / 2 && OwnCollRect.Left <= OtherCollRect.Right && OwnCollRect.Right >= OtherCollRect.Left)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsOnLadder(Rectangle OwnCollRect, Rectangle LadderRect)
+        {
+            if (OwnCollRect.Left <= LadderRect.Right && OwnCollRect.Right >= LadderRect.Left && OwnCollRect.Top <= LadderRect.Bottom && OwnCollRect.Bottom >= LadderRect.Top)
             {
                 return true;
             }

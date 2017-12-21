@@ -19,6 +19,15 @@ namespace Luyks.Jonas
             set { blocks = value; }
         }
 
+        private List<Ladder> ladders = new List<Ladder>();
+
+        public List<Ladder> Ladders
+        {
+            get { return ladders; }
+            set { ladders = value; }
+        }
+
+
         public int Height { get; set; }
         public int Width { get; set; }
 
@@ -34,13 +43,26 @@ namespace Luyks.Jonas
             {
                 blocks[i].Draw(spritebatch);
             }
+
+            for (int i = 0; i < Ladders.Count; i++)
+            {
+                Ladders[i].Draw(spritebatch);
+            }
         }
 
-        public void Add(List<Block> blocks)
+        public void AddBlock(List<Block> blocks)
         {
             for (int i = 0; i < blocks.Count; i++)
             {
                 this.blocks.Add(blocks[i]);
+            }
+        }
+
+        public void AddLadder(List<Ladder> ladders)
+        {
+            for (int i = 0; i < ladders.Count; i++)
+            {
+                this.ladders.Add(ladders[i]);
             }
         }
 

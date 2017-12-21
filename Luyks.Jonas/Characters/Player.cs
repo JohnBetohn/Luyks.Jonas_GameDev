@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,15 +38,16 @@ namespace Luyks.Jonas
         {
             Rectangle collidedV = CollManager.CheckCollisionVertical(CollisionRectangle);
             Rectangle collidedH = CollManager.CheckCollsionHorizontal(CollisionRectangle);
+            Controls.OnLadder = CollManager.CheckLadder(CollisionRectangle);
 
             if (CollManager.HasCollLeft)
             {
-                position.X = collidedH.Right;
+                position.X = collidedH.Right + 5;
             }
 
             if (CollManager.HasCollRight)
             {
-                position.X = collidedH.Left - CollisionRectangle.Width;
+                position.X = collidedH.Left - CollisionRectangle.Width + 5;
             }
 
             if (CollManager.HasCollTop)
@@ -62,12 +62,8 @@ namespace Luyks.Jonas
                 position.Y = collidedV.Top - CollisionRectangle.Height;
             }
             
-            if (!CollManager.HasCollBot)
+            if (!CollManager.HasCollBot && !Controls.OnLadder)
             {
-                if (!Controls.Falling)
-                {
-                    Controls.LastTouch = gameTime.ElapsedGameTime.TotalSeconds;
-                }
                 Controls.Falling = true;                
             }
         }
@@ -78,11 +74,12 @@ namespace Luyks.Jonas
         {
             Position = position;
             CollisionRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 60);
-            WalkSpeedx = 5;
-            RunSpeedx = 10;
+            WalkSpeedx = 2;
+            ClimbSpeed = 3;
+            RunSpeedx = 6;
             SpeedY = 0;
             FallSpeed = 1;
-            initAnimations();
+            InitAnimations();
             SetActiveAnimation(0);
         }
 
@@ -118,17 +115,18 @@ namespace Luyks.Jonas
                 activeAnimation.Update(gameTime);
             }
 
-            if (Controls.Jump && !Controls.Falling && SpeedY != -15)
+            if (Controls.Jump && !Controls.Falling && SpeedY >= 0)
             {
                 SpeedY = -15;
                 position.Y = position.Y + SpeedY;
             }
 
-            if (Controls.Falling)
+            if (Controls.Falling && !Controls.OnLadder)
             {
                 if (SpeedY < 15)
                 {
                     SpeedY = SpeedY + FallSpeed;
+                    //SetActiveAnimation(7);
                 }
                 position.Y = position.Y + SpeedY;
             }
@@ -143,12 +141,23 @@ namespace Luyks.Jonas
                 SetActiveAnimation(0);
             }
 
+            if (Controls.Up && Controls.OnLadder)
+            {
+                position.Y = position.Y - ClimbSpeed;
+                Console.WriteLine("Hello");
+            }
+
+            if (Controls.Down && Controls.OnLadder)
+            {
+                position.Y = position.Y + ClimbSpeed;
+            }
+
             MoveCollisionRectangle();
         }
 
         public void MoveCollisionRectangle()
         {
-            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, 50, 50);
+            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, activeAnimation.CurrentFrame.SourceRectangle.Width, activeAnimation.CurrentFrame.SourceRectangle.Height);
         }
 
         #region Animations
@@ -176,7 +185,7 @@ namespace Luyks.Jonas
         private Animation gettingup = new Animation();
         private Animation died = new Animation();
 
-        protected void initAnimations()
+        protected void InitAnimations()
         {
             animations.Add(stance);
             animations.Add(turning);
@@ -216,6 +225,11 @@ namespace Luyks.Jonas
             run.AddFrame(new Rectangle(568, 210, 58, 50));
             run.FramesPerSecond = 15;
 
+            jump.AddFrame(new Rectangle(18, 468, 48, 53));
+            jump.AddFrame(new Rectangle(65, 467, 48, 54));
+            jump.AddFrame(new Rectangle(118, 468, 53, 34));
+            jump.AddFrame(new Rectangle(186, 467, 48, 44));
+            jump.FramesPerSecond = 4;
         }
 
         private Animation activeAnimation;
@@ -238,7 +252,7 @@ namespace Luyks.Jonas
         {
             if (Controls.walkLeft || Controls.runLeft)
             {
-                spriteBatch.Draw(Texture, Position, null, activeAnimation.CurrentFrame.SourceRectangle, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+                spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: activeAnimation.CurrentFrame.SourceRectangle, color: Color.White, effects: SpriteEffects.FlipHorizontally);
             }
             else
             {

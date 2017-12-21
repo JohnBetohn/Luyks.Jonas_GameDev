@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -32,6 +31,10 @@ namespace Luyks.Jonas
         private Block wall1 = new Block(new Vector2(250, 350));
         private List<Block> walls;
 
+        private Ladder ladder0 = new Ladder(new Vector2(200, 200));
+        private Ladder ladder1 = new Ladder(new Vector2(200, 150));
+        private List<Ladder> ladders;
+
         private CollisionManager collisionManager;
 
         public Game1()
@@ -51,10 +54,12 @@ namespace Luyks.Jonas
             // TODO: Add your initialization logic here
             floor = new List<Block> {floor0, floor1, floor2, floor3, floor4, floor5, floor6, floor7, floor8};
             walls = new List<Block> {wall0, wall1};
-            level1.Add(floor);
-            level1.Add(walls);
+            ladders = new List<Ladder> { ladder0, ladder1 };
+            level1.AddBlock(floor);
+            level1.AddBlock(walls);
+            level1.AddLadder(ladders);
 
-            collisionManager = new CollisionManager(level1.getLevelCollision());
+            collisionManager = new CollisionManager(level1.getLevelCollision(), ladders);
             player.CollManager = collisionManager;
 
             base.Initialize();
@@ -74,6 +79,7 @@ namespace Luyks.Jonas
 
             Texture2D floortexture = Content.Load<Texture2D>("castleMID");
             Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
+            Texture2D ladderTexture = Content.Load<Texture2D>("ladder_Mid");
 
             for (int i = 0; i < floor.Count; i++)
             {
@@ -83,6 +89,12 @@ namespace Luyks.Jonas
             for (int i = 0; i < walls.Count; i++)
             {
                 walls[i].Texture = walltexture;
+            }
+
+
+            for (int i = 0; i < ladders.Count; i++)
+            {
+                ladders[i].Texture = ladderTexture;
             }
 
             player.Controls = new ControlsWASD();
@@ -126,8 +138,8 @@ namespace Luyks.Jonas
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
-            player.Draw(spriteBatch);
             level1.Draw(spriteBatch);
+            player.Draw(spriteBatch);
 
             spriteBatch.End();
 

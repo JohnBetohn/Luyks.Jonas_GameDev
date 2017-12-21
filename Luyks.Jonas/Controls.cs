@@ -14,9 +14,11 @@ namespace Luyks.Jonas
         public bool walkRight { get; set; }
         public bool runLeft { get; set; }
         public bool runRight { get; set; }
+        public bool Up { get; set; }
+        public bool Down { get; set; }
         public bool Jump { get; set; }
         public bool Falling { get; set; }
-        public double LastTouch { get; set; }
+        public bool OnLadder { get; set; }
 
         public abstract void CheckInputs();
         public void ResetMove()
@@ -54,6 +56,14 @@ namespace Luyks.Jonas
             {
                 Jump = true;
             }
+            if (stateKey.IsKeyDown(Keys.Z))
+            {
+                Up = true;
+            }
+            if (stateKey.IsKeyDown(Keys.S))
+            {
+                Down = true;
+            }
             if (stateKey.IsKeyUp(Keys.Q))
             {
                 walkLeft = false;
@@ -67,6 +77,14 @@ namespace Luyks.Jonas
             if (stateKey.IsKeyUp(Keys.Space))
             {
                 Jump = false;
+            }
+            if (stateKey.IsKeyUp(Keys.Z))
+            {
+                Up = false;
+            }
+            if (stateKey.IsKeyUp(Keys.S))
+            {
+                Down = false;
             }
 
             if (walkLeft && walkRight || runLeft && runRight)

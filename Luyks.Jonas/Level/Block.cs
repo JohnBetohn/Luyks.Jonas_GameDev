@@ -18,7 +18,7 @@ namespace Luyks.Jonas
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, new Rectangle(0, 0, 50, 50) , Color.White);
+            spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: new Rectangle(0, 0, 70, 70), color: Color.White, scale: new Vector2((float)0.71, (float)0.71));
         }
     }
 }
