@@ -101,21 +101,21 @@ namespace Luyks.Jonas
                 ActiveAnimation.Update(gameTime);
             }
 
-            if (Controls.runLeft)
+            if (Controls.RunLeft)
             {
                 position.X = Position.X - RunSpeedx;
                 SetActiveAnimation(4);
                 ActiveAnimation.Update(gameTime);
             }
 
-            if (Controls.runRight)
+            if (Controls.RunRight)
             {
                 position.X = Position.X + RunSpeedx;
                 SetActiveAnimation(4);
                 ActiveAnimation.Update(gameTime);
             }
 
-            if (Controls.Jump && !Controls.Falling && SpeedY >= 0)
+            if (Controls.Jump && !Controls.Falling && SpeedY >= 0)      // Jump only when you are not in the air
             {
                 SpeedY = -15;
                 position.Y = position.Y + SpeedY;
@@ -123,7 +123,7 @@ namespace Luyks.Jonas
 
             if (Controls.Falling && !Controls.OnLadder)
             {
-                if (SpeedY < 15)
+                if (SpeedY < 15)                    // Stop accelerating after SpeedY >= 15
                 {
                     SpeedY = SpeedY + FallSpeed;
                     //SetActiveAnimation(7);
@@ -131,12 +131,12 @@ namespace Luyks.Jonas
                 position.Y = position.Y + SpeedY;
             }
 
-            if (!Controls.Falling && SpeedY >= 0)
+            if (!Controls.Falling && SpeedY >= 0) // Stop falling, you're on the ground
             {
                 SpeedY = 0;
             }
 
-            if (!Controls.runRight && !Controls.walkRight && !Controls.runLeft && !Controls.walkLeft)
+            if (!Controls.RunRight && !Controls.walkRight && !Controls.RunLeft && !Controls.walkLeft)  // Stand still
             {
                 SetActiveAnimation(0);
             }
@@ -224,6 +224,8 @@ namespace Luyks.Jonas
             run.AddFrame(new Rectangle(568, 210, 58, 50));
             run.FramesPerSecond = 15;
 
+
+
             jump.AddFrame(new Rectangle(18, 468, 48, 53));
             jump.AddFrame(new Rectangle(65, 467, 48, 54));
             jump.AddFrame(new Rectangle(118, 468, 53, 34));
@@ -243,7 +245,7 @@ namespace Luyks.Jonas
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (Controls.walkLeft || Controls.runLeft)
+            if (Controls.walkLeft || Controls.RunLeft)
             {
                 spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: ActiveAnimation.CurrentFrame.SourceRectangle, color: Color.White, effects: SpriteEffects.FlipHorizontally);
             }

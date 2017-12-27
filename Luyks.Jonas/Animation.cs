@@ -13,10 +13,11 @@ namespace Luyks.Jonas
         public Animation_Frame CurrentFrame { get; set; }
         public int FramesPerSecond { get; set; }
 
+        public bool AnimationComplete { get; set; }
+
         private int counter = 0;
 
         private double x = 0;
-        public double offset { get; set; }
 
         private int _totalWidth = 0;
 
@@ -34,7 +35,6 @@ namespace Luyks.Jonas
 
             frames.Add(newFrame);
             CurrentFrame = frames[0];
-            offset = CurrentFrame.SourceRectangle.Width;
             foreach (Animation_Frame f in frames)
                 _totalWidth += f.SourceRectangle.Width;
         }
@@ -50,15 +50,14 @@ namespace Luyks.Jonas
                 Console.WriteLine(x);
                 x = 0;
                 counter++;
+                AnimationComplete = false;
                 if (counter >= frames.Count)
+                {
                     counter = 0;
+                    AnimationComplete = true;
+                } 
                 CurrentFrame = frames[counter];
-                offset += CurrentFrame.SourceRectangle.Width;
             }
-            if (offset >= _totalWidth)
-                offset = 0;
-
-
         }
     }
 }

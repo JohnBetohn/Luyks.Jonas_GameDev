@@ -12,8 +12,8 @@ namespace Luyks.Jonas
     {
         public bool walkLeft { get; set; }
         public bool walkRight { get; set; }
-        public bool runLeft { get; set; }
-        public bool runRight { get; set; }
+        public bool RunLeft { get; set; }
+        public bool RunRight { get; set; }
         public bool Up { get; set; }
         public bool Down { get; set; }
         public bool Jump { get; set; }
@@ -25,8 +25,8 @@ namespace Luyks.Jonas
         {
             walkLeft = false;
             walkRight = false;
-            runLeft = false;
-            runRight = false;
+            RunLeft = false;
+            RunRight = false;
             Jump = false;
         }
     }
@@ -46,11 +46,11 @@ namespace Luyks.Jonas
             }
             if (stateKey.IsKeyDown(Keys.Q) && stateKey.IsKeyDown(Keys.LeftShift))
             {
-                runLeft = true;
+                RunLeft = true;
             }
             if (stateKey.IsKeyDown(Keys.D) && stateKey.IsKeyDown(Keys.LeftShift))
             {
-                runRight = true;
+                RunRight = true;
             }
             if (stateKey.IsKeyDown(Keys.Space) && !Falling)
             {
@@ -67,12 +67,12 @@ namespace Luyks.Jonas
             if (stateKey.IsKeyUp(Keys.Q))
             {
                 walkLeft = false;
-                runLeft = false;
+                RunLeft = false;
             }
             if (stateKey.IsKeyUp(Keys.D))
             {
                 walkRight = false;
-                runRight = false;
+                RunRight = false;
             }
             if (stateKey.IsKeyUp(Keys.Space))
             {
@@ -87,7 +87,7 @@ namespace Luyks.Jonas
                 Down = false;
             }
 
-            if (walkLeft && walkRight || runLeft && runRight)
+            if (walkLeft && walkRight || RunLeft && RunRight)
             {
                 ResetMove();
             }

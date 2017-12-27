@@ -18,11 +18,7 @@ namespace Luyks.Jonas
         public bool HasCollTop { get; set; }
         public CollisionManager(List<Rectangle> collisionRectangles, List<Ladder> ladders)
         {
-            CollisionRectangles = new List<Rectangle>();
-            for (int i = 0; i < collisionRectangles.Count; i++)
-            {
-                this.CollisionRectangles.Add(collisionRectangles[i]);
-            }
+            CollisionRectangles = collisionRectangles;
 
             Ladders = ladders;
 
@@ -80,7 +76,7 @@ namespace Luyks.Jonas
             return false;
         }
 
-        public bool CollisionLeft(Rectangle OwnCollRect, Rectangle OtherCollRect)
+        public bool CollisionLeft(Rectangle OwnCollRect, Rectangle OtherCollRect) // Here are some very elaborate if's for deteting collison
         {
             if (OwnCollRect.Left <= OtherCollRect.Right && OwnCollRect.Left >= OtherCollRect.Right - OtherCollRect.Width / 2 && OwnCollRect.Bottom >= OtherCollRect.Top + 5 && OwnCollRect.Top <= OtherCollRect.Bottom)
             {
