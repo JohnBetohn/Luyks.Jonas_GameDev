@@ -24,7 +24,7 @@ namespace Luyks.Jonas
 
         #region Movement
 
-        public Controls Controls { get; set; }
+        public ControlsWASD Controls { get; set; }
 
         private Vector2 position;
 
@@ -74,7 +74,7 @@ namespace Luyks.Jonas
         {
             Position = position;
             CollisionRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 60);
-            WalkSpeedx = 2;
+            WalkSpeedx = 3;
             ClimbSpeed = 3;
             RunSpeedx = 6;
             SpeedY = 0;
@@ -91,28 +91,28 @@ namespace Luyks.Jonas
             {
                 position.X = Position.X - WalkSpeedx;
                 SetActiveAnimation(2);
-                activeAnimation.Update(gameTime);
+                ActiveAnimation.Update(gameTime);
             }
 
             if (Controls.walkRight)
             {
                 position.X = Position.X + WalkSpeedx;
                 SetActiveAnimation(2);
-                activeAnimation.Update(gameTime);
+                ActiveAnimation.Update(gameTime);
             }
 
             if (Controls.runLeft)
             {
                 position.X = Position.X - RunSpeedx;
                 SetActiveAnimation(4);
-                activeAnimation.Update(gameTime);
+                ActiveAnimation.Update(gameTime);
             }
 
             if (Controls.runRight)
             {
                 position.X = Position.X + RunSpeedx;
                 SetActiveAnimation(4);
-                activeAnimation.Update(gameTime);
+                ActiveAnimation.Update(gameTime);
             }
 
             if (Controls.Jump && !Controls.Falling && SpeedY >= 0)
@@ -156,7 +156,7 @@ namespace Luyks.Jonas
 
         public void MoveCollisionRectangle()
         {
-            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, activeAnimation.CurrentFrame.SourceRectangle.Width, activeAnimation.CurrentFrame.SourceRectangle.Height);
+            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, ActiveAnimation.CurrentFrame.SourceRectangle.Width, ActiveAnimation.CurrentFrame.SourceRectangle.Height);
         }
 
         #region Animations
@@ -184,7 +184,7 @@ namespace Luyks.Jonas
         private Animation gettingup = new Animation();
         private Animation died = new Animation();
 
-        protected void InitAnimations()
+        public override void InitAnimations()
         {
             animations.Add(stance);
             animations.Add(turning);
@@ -231,17 +231,11 @@ namespace Luyks.Jonas
             jump.FramesPerSecond = 4;
         }
 
-        private Animation activeAnimation;
+        public Animation ActiveAnimation { get; set; }
 
-        public Animation ActiveAnimation
+        public override void SetActiveAnimation(int x)
         {
-            get { return activeAnimation; }
-            set { activeAnimation = value; }
-        }
-
-        public void SetActiveAnimation(int x)
-        {
-            activeAnimation = animations[x];
+            ActiveAnimation = Animations[x];
         }
 
         #endregion
@@ -251,13 +245,12 @@ namespace Luyks.Jonas
         {
             if (Controls.walkLeft || Controls.runLeft)
             {
-                spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: activeAnimation.CurrentFrame.SourceRectangle, color: Color.White, effects: SpriteEffects.FlipHorizontally);
+                spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: ActiveAnimation.CurrentFrame.SourceRectangle, color: Color.White, effects: SpriteEffects.FlipHorizontally);
             }
             else
             {
-                spriteBatch.Draw(Texture, Position, activeAnimation.CurrentFrame.SourceRectangle, Color.White);
+                spriteBatch.Draw(Texture, Position, ActiveAnimation.CurrentFrame.SourceRectangle, Color.White);
             }
-
         }
 
     }

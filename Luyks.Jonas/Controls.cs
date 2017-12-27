@@ -93,4 +93,12 @@ namespace Luyks.Jonas
             }
         }
     }
+
+    public class ControlsAI : Controls
+    {
+        public override void CheckInputs()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

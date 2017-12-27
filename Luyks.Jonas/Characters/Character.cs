@@ -21,5 +21,7 @@ namespace Luyks.Jonas
         public Rectangle CollisionRectangle { get; set; }
 
         public abstract void HandleCollision(GameTime gameTime);
+        public abstract void InitAnimations();
+        public abstract void SetActiveAnimation(int x);
     }
 }

@@ -29,8 +29,7 @@ namespace Luyks.Jonas
         {
             Animation_Frame newFrame = new Animation_Frame()
             {
-                SourceRectangle = rectangle,
-                //Duration = duration
+                SourceRectangle = rectangle
             };
 
             frames.Add(newFrame);

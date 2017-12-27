@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Animation_Frame.cs" />
     <Compile Include="Animation.cs" />
+    <Compile Include="Characters\Enemy.cs" />
     <Compile Include="CollisionManager.cs" />
     <Compile Include="Level\Block.cs" />
     <Compile Include="Characters\Character.cs" />
