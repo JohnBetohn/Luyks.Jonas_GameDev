@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Luyks.Jonas
 {
-    class Ladder : LevelAsset
+    public class Ladder : LevelAsset
     {
         public Ladder(Vector2 vector2)
         {

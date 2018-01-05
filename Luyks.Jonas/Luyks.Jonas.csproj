@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AIHandler.cs" />
     <Compile Include="Animation_Frame.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Characters\Enemy.cs" />

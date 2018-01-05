@@ -12,27 +12,7 @@ namespace Luyks.Jonas
 {
     class Player : Character
     {
-        //Properties
-        private CollisionManager collManager;
-
-        public CollisionManager CollManager
-        {
-            get { return collManager; }
-            set { collManager = value; }
-        }
-
-
         #region Movement
-
-        public ControlsWASD Controls { get; set; }
-
-        private Vector2 position;
-
-        public Vector2 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
 
         public override void HandleCollision(GameTime gameTime)
         {
@@ -42,24 +22,24 @@ namespace Luyks.Jonas
 
             if (CollManager.HasCollLeft)
             {
-                position.X = collidedH.Right + 5;
+                Position = new Vector2(collidedH.Right + 5, Position.Y);
             }
 
             if (CollManager.HasCollRight)
             {
-                position.X = collidedH.Left - CollisionRectangle.Width + 5;
+                Position = new Vector2(collidedH.Left - CollisionRectangle.Width + 5, Position.Y);
             }
 
             if (CollManager.HasCollTop)
             {
-                position.Y = collidedV.Bottom;
+                Position = new Vector2(Position.X, collidedV.Bottom);
                 SpeedY = 0;
             }
 
             if (CollManager.HasCollBot)
             {
                 Controls.Falling = false;
-                position.Y = collidedV.Top - CollisionRectangle.Height;
+                Position = new Vector2(Position.X, collidedV.Top - CollisionRectangle.Height);
             }
             
             if (!CollManager.HasCollBot && !Controls.OnLadder)
@@ -68,12 +48,19 @@ namespace Luyks.Jonas
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            Move(gameTime);
+            MoveCollisionRectangle();
+            HandleCollision(gameTime);
+            CollManager.ResetColl();
+        }
+
         #endregion
 
         public Player(Vector2 position)
         {
             Position = position;
-            CollisionRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 60);
             WalkSpeedx = 3;
             ClimbSpeed = 3;
             RunSpeedx = 6;
@@ -81,93 +68,9 @@ namespace Luyks.Jonas
             FallSpeed = 1;
             InitAnimations();
             SetActiveAnimation(0);
+            Controls = new ControlsWASD();
         }
-
-        public void Move(GameTime gameTime)
-        {
-            Controls.CheckInputs();
-
-            if (Controls.walkLeft)
-            {
-                position.X = Position.X - WalkSpeedx;
-                SetActiveAnimation(2);
-                ActiveAnimation.Update(gameTime);
-            }
-
-            if (Controls.walkRight)
-            {
-                position.X = Position.X + WalkSpeedx;
-                SetActiveAnimation(2);
-                ActiveAnimation.Update(gameTime);
-            }
-
-            if (Controls.RunLeft)
-            {
-                position.X = Position.X - RunSpeedx;
-                SetActiveAnimation(4);
-                ActiveAnimation.Update(gameTime);
-            }
-
-            if (Controls.RunRight)
-            {
-                position.X = Position.X + RunSpeedx;
-                SetActiveAnimation(4);
-                ActiveAnimation.Update(gameTime);
-            }
-
-            if (Controls.Jump && !Controls.Falling && SpeedY >= 0)      // Jump only when you are not in the air
-            {
-                SpeedY = -15;
-                position.Y = position.Y + SpeedY;
-            }
-
-            if (Controls.Falling && !Controls.OnLadder)
-            {
-                if (SpeedY < 15)                    // Stop accelerating after SpeedY >= 15
-                {
-                    SpeedY = SpeedY + FallSpeed;
-                    //SetActiveAnimation(7);
-                }
-                position.Y = position.Y + SpeedY;
-            }
-
-            if (!Controls.Falling && SpeedY >= 0) // Stop falling, you're on the ground
-            {
-                SpeedY = 0;
-            }
-
-            if (!Controls.RunRight && !Controls.walkRight && !Controls.RunLeft && !Controls.walkLeft)  // Stand still
-            {
-                SetActiveAnimation(0);
-            }
-
-            if (Controls.Up && Controls.OnLadder)
-            {
-                position.Y = position.Y - ClimbSpeed;
-            }
-
-            if (Controls.Down && Controls.OnLadder)
-            {
-                position.Y = position.Y + ClimbSpeed;
-            }
-
-            MoveCollisionRectangle();
-        }
-
-        public void MoveCollisionRectangle()
-        {
-            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, ActiveAnimation.CurrentFrame.SourceRectangle.Width, ActiveAnimation.CurrentFrame.SourceRectangle.Height);
-        }
-
         #region Animations
-
-        private List<Animation> animations = new List<Animation>();
-
-        public List<Animation> Animations
-        {
-            get { return animations; }
-            set { animations = value; }
-        }
 
         private Animation stance = new Animation();
         private Animation turning = new Animation();
@@ -186,19 +89,19 @@ namespace Luyks.Jonas
 
         public override void InitAnimations()
         {
-            animations.Add(stance);
-            animations.Add(turning);
-            animations.Add(walk);
-            animations.Add(walkslide);
-            animations.Add(run);
-            animations.Add(ladder);
-            animations.Add(waiting);
-            animations.Add(jump);
-            animations.Add(falling);
-            animations.Add(hardhitfloor);
-            animations.Add(dizzy);
-            animations.Add(gettingup);
-            animations.Add(died);
+            Animations.Add(stance);
+            Animations.Add(turning);
+            Animations.Add(walk);
+            Animations.Add(walkslide);
+            Animations.Add(run);
+            Animations.Add(ladder);
+            Animations.Add(waiting);
+            Animations.Add(jump);
+            Animations.Add(falling);
+            Animations.Add(hardhitfloor);
+            Animations.Add(dizzy);
+            Animations.Add(gettingup);
+            Animations.Add(died);
 
             stance.AddFrame(new Rectangle(14, 36, 36, 57));
 
@@ -232,14 +135,6 @@ namespace Luyks.Jonas
             jump.AddFrame(new Rectangle(186, 467, 48, 44));
             jump.FramesPerSecond = 4;
         }
-
-        public Animation ActiveAnimation { get; set; }
-
-        public override void SetActiveAnimation(int x)
-        {
-            ActiveAnimation = Animations[x];
-        }
-
         #endregion
 
 

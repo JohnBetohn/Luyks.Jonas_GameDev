@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    class CollisionManager
+    public class CollisionManager
     {
         public List<Rectangle> CollisionRectangles { get; set; }
         public List<Ladder> Ladders { get; set; }

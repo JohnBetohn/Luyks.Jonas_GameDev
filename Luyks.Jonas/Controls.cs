@@ -19,6 +19,7 @@ namespace Luyks.Jonas
         public bool Jump { get; set; }
         public bool Falling { get; set; }
         public bool OnLadder { get; set; }
+        public bool Look_Wait { get; set; }
 
         public abstract void CheckInputs();
         public void ResetMove()
@@ -35,6 +36,7 @@ namespace Luyks.Jonas
     {
         public override void CheckInputs()
         {
+            Console.WriteLine("hello");
             KeyboardState stateKey = Keyboard.GetState();
             if (stateKey.IsKeyDown(Keys.Q) && stateKey.IsKeyUp(Keys.LeftShift))
             {
@@ -98,7 +100,7 @@ namespace Luyks.Jonas
     {
         public override void CheckInputs()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    public class Animation_Frame
+    class AIHandler
     {
-        public Rectangle SourceRectangle { get; set; }
+        public List<Enemy> EnemyList { get; set; }
+        public Vector2 PlayerPosition { get; set; }
+        public List<int[,]> Destinations { get; set; }
     }
 }

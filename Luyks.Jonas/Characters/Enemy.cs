@@ -6,60 +6,63 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luyks.Jonas.Characters
+namespace Luyks.Jonas
 {
     class Enemy : Character
     {
-        private CollisionManager collManager;
-
-        public CollisionManager CollManager
-        {
-            get { return collManager; }
-            set { collManager = value; }
-        }
-
-        public ControlsAI Controls { get; set; }
-
-        private Vector2 position;
-
-        public Vector2 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
-
         public Enemy(Vector2 position)
         {
             Position = position;
             WalkSpeedx = 3;
             ClimbSpeed = 3;
-            SpeedY = 0;
             FallSpeed = 1;
+            SpeedY = 0;
+            Controls = new ControlsAI();
+            InitAnimations();
         }
 
         #region Movement
-        public void Move()
-        {
-
-        }
-
-        public void MoveCollisionRectangle()
-        {
-
-        }
-
         public override void HandleCollision(GameTime gameTime)
         {
-            throw new NotImplementedException();
+            Rectangle collidedV = CollManager.CheckCollisionVertical(CollisionRectangle);
+            Rectangle collidedH = CollManager.CheckCollsionHorizontal(CollisionRectangle);
+            Controls.OnLadder = CollManager.CheckLadder(CollisionRectangle);
+
+            if (CollManager.HasCollLeft)
+            {
+                Position = new Vector2(collidedH.Right + 5, Position.Y);
+            }
+
+            if (CollManager.HasCollRight)
+            {
+                Position = new Vector2(collidedH.Left - CollisionRectangle.Width + 5, Position.Y);
+            }
+
+            if (CollManager.HasCollTop)
+            {
+                Position = new Vector2(Position.X, collidedV.Bottom);
+                SpeedY = 0;
+            }
+
+            if (CollManager.HasCollBot)
+            {
+                Controls.Falling = false;
+                Position = new Vector2(Position.X, collidedV.Top - CollisionRectangle.Height);
+            }
+            
+            if (!CollManager.HasCollBot && !Controls.OnLadder)
+            {
+                Controls.Falling = true;                
+            }
         }
 
-
+        public new void MoveCollisionRectangle()
+        {
+            CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(ActiveAnimation.CurrentFrame.SourceRectangle.Width * 0.66), (int)(ActiveAnimation.CurrentFrame.SourceRectangle.Height * 0.66));
+        }
         #endregion
 
         #region Animations
-        public Animation ActiveAnimation { get; set; }
-        public List<Animation> Animations { get; set; }
-
         private Animation stance = new Animation();
         private Animation walk = new Animation();
         private Animation ladder = new Animation();
@@ -67,13 +70,18 @@ namespace Luyks.Jonas.Characters
         private Animation jump = new Animation();
         private Animation falling = new Animation();
         private Animation hardhitfloor = new Animation();
+        private Animation dudanimation = new Animation();
 
         public override void InitAnimations()
         {
             Animations.Add(stance);
+            Animations.Add(dudanimation);
             Animations.Add(walk);
+            Animations.Add(dudanimation);
+            Animations.Add(dudanimation);
             Animations.Add(ladder);
             Animations.Add(looking);
+            Animations.Add(jump);
 
             stance.AddFrame(new Rectangle(0, 190, 66, 92));
             stance.FramesPerSecond = 1;
@@ -110,12 +118,15 @@ namespace Luyks.Jonas.Characters
             looking.FramesPerSecond = 8;
 
         }
-
-        public override void SetActiveAnimation(int x)
-        {
-            ActiveAnimation = Animations[x];
-        }
         #endregion
+
+        public override void Update(GameTime gameTime)
+        {
+            Move(gameTime);
+            MoveCollisionRectangle();
+            HandleCollision(gameTime);
+            CollManager.ResetColl();
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -125,7 +136,7 @@ namespace Luyks.Jonas.Characters
             }
             else
             {
-                spriteBatch.Draw(Texture, Position, ActiveAnimation.CurrentFrame.SourceRectangle, color: Color.White, scale: new Vector2((float)0.66, (float)0.66));
+                spriteBatch.Draw(texture: Texture, position: Position, sourceRectangle: ActiveAnimation.CurrentFrame.SourceRectangle, color: Color.White, scale: new Vector2((float)0.66, (float)0.66));
             }
         }
     }

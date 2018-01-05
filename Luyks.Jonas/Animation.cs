@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    class Animation
+    public class Animation
     {
-        private List<Animation_Frame> frames;
+        public List<Animation_Frame> frames;
         public Animation_Frame CurrentFrame { get; set; }
         public int FramesPerSecond { get; set; }
 
         public bool AnimationComplete { get; set; }
 
-        private int counter = 0;
+        public int counter = 0;
 
-        private double x = 0;
+        public double x = 0;
 
-        private int _totalWidth = 0;
+        public int _totalWidth = 0;
 
         public Animation()
         {
