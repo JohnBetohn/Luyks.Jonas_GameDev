@@ -10,6 +10,8 @@ namespace Luyks.Jonas
 {
     class Enemy : Character
     {
+        public List<Node> Destinations { get; set; }
+        public Node Current {get; set; }
         public Enemy(Vector2 position)
         {
             Position = position;

@@ -16,6 +16,9 @@ namespace Luyks.Jonas
         public TileMap ActiveMap { get; set;  }
         public AIHandler AIHandler { get; set; }
         public Map Map { get; set; }
+        public List<Node> Nodes { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
         private List<Block> blocks = new List<Block>();
 
@@ -38,7 +41,6 @@ namespace Luyks.Jonas
         public Level()
         {
             Map = new Map();
-            SetActiveMap(0);
         }
 
         public void Draw(SpriteBatch spritebatch)
@@ -63,7 +65,7 @@ namespace Luyks.Jonas
             return Collision;
         }
 
-        public void SetActiveMap(int x)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
         {
             switch (x)
             {
@@ -75,12 +77,19 @@ namespace Luyks.Jonas
                     ActiveMap = Map.LevelMap2;
                     break;
             }
+            Blocks = new List<Block>();
+            Ladders = new List<Ladder>();
+            Nodes = new List<Node>();
+            LoadMap(WallTexture, FloorTexture, LadderTexture);
+            Width = ActiveMap.Map.GetLength(1) * 50;
+            Height = ActiveMap.Map.GetLength(0) * 50;
         }
 
         public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
         {
             Block Block;
             Ladder Ladder;
+            Node Node;
             for (int i = 0; i < ActiveMap.Map.GetLength(0); i++)
             {
                 for (int j = 0; j < ActiveMap.Map.GetLength(1); j++)
@@ -98,6 +107,8 @@ namespace Luyks.Jonas
                             } else if (ActiveMap.Map[i - 1, j] == 0)
                             {
                                 Block.Texture = FloorTexture;
+                                Node = new Node(new Vector2(j * 50, (i - 1) * 50));
+                                Nodes.Add(Node);
                             } else
                             {
                                 Block.Texture = WallTexture;
@@ -110,9 +121,21 @@ namespace Luyks.Jonas
                                 Texture = LadderTexture
                             };
                             Ladders.Add(Ladder);
+                            Node = new Node(new Vector2(j * 50, i * 50));
+                            Nodes.Add(Node);
+                            if (ActiveMap.Map[i - 1, j] == 0)
+                            {
+                                Node = new Node(new Vector2(j * 50, (i - 1) * 50));
+                                Nodes.Add(Node);
+                            }
                             break;
                     }
                 }
+            }
+            Console.WriteLine("Available Nodes:");
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                Console.WriteLine(i + ". " + Nodes[i].Position);
             }
         }
     }
