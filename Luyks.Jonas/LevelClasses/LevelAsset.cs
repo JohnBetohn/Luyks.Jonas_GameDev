@@ -13,6 +13,7 @@ namespace Luyks.Jonas
         public Vector2 Position { get; set; }
         public Texture2D Texture { get; set; }
         public Rectangle CollisionRectangle { get; set; }
+        public int ID { get; set; }
 
         public abstract void Draw(SpriteBatch spriteBatch);
     }

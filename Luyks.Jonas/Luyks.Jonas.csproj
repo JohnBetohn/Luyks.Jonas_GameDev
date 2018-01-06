@@ -41,19 +41,22 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AIHandler.cs" />
+    <Compile Include="Camera2D.cs" />
+    <Compile Include="LevelClasses\AIHandler.cs" />
     <Compile Include="Animation_Frame.cs" />
     <Compile Include="Animation.cs" />
     <Compile Include="Characters\Enemy.cs" />
     <Compile Include="CollisionManager.cs" />
-    <Compile Include="Level\Block.cs" />
+    <Compile Include="LevelClasses\Block.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Level\Ladder.cs" />
-    <Compile Include="Level\Level.cs" />
-    <Compile Include="Level\LevelAsset.cs" />
+    <Compile Include="LevelClasses\Ladder.cs" />
+    <Compile Include="LevelClasses\Level.cs" />
+    <Compile Include="LevelClasses\LevelAsset.cs" />
     <Compile Include="Characters\Player.cs" />
+    <Compile Include="LevelClasses\Map.cs" />
+    <Compile Include="LevelClasses\TileMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

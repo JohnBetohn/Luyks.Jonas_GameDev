@@ -36,7 +36,6 @@ namespace Luyks.Jonas
     {
         public override void CheckInputs()
         {
-            Console.WriteLine("hello");
             KeyboardState stateKey = Keyboard.GetState();
             if (stateKey.IsKeyDown(Keys.Q) && stateKey.IsKeyUp(Keys.LeftShift))
             {
