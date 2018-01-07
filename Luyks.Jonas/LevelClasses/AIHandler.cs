@@ -10,15 +10,10 @@ namespace Luyks.Jonas
     class AIHandler
     {
         public List<Enemy> EnemyList { get; set; }
-        public Vector2 PlayerPosition { get; set; }
+        public List<Node> PlayerPosition { get; set; }
         public List<Node> Nodes { get; set; }
 
-        public void CurrentNode()
-        {
-            // find currentNode of certain enemy
-        }
-
-        public bool FindFastetPathTo(Node Destination, Node _current)
+        public bool FindFastestPathTo(Node Destination, Node _current, Enemy enemy)
         {
             Console.WriteLine("Now I will search for a path.");
             Node Current = _current;
@@ -40,7 +35,8 @@ namespace Luyks.Jonas
                 Console.WriteLine(Current.Position);
                 if (Destination.EqualsTo(Current))
                 {
-
+                    enemy.Path = ReconstructPath(Current.CameFrom, Current);
+                    Console.WriteLine("I has Found Se PAths");
                     return true;
                 }
 
@@ -50,7 +46,7 @@ namespace Luyks.Jonas
                 for (int i = 0; i < Current.Neighbors.Count; i++)
                 {
                     Node neighbor = Current.Neighbors[i];
-                    Console.WriteLine("Checking neighbors...");
+                    //Console.WriteLine("Checking neighbors...");
                     if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
                     {
                         OpenSet.Add(neighbor);
@@ -59,7 +55,7 @@ namespace Luyks.Jonas
                     double temp_GScore = Current.GScore + 50;
                     if (temp_GScore < neighbor.GScore)
                     {
-                        Console.WriteLine("Checking if viable path");
+                        //Console.WriteLine("Checking if viable path");
                         neighbor.CameFrom = Current;
                         neighbor.GScore = temp_GScore;
                         neighbor.FScore = temp_GScore + Estimate(neighbor, Destination);
@@ -85,7 +81,7 @@ namespace Luyks.Jonas
             return est;
         }
 
-        public List<Node> ReconstructPath(int Camefrom, Node End)
+        public List<Node> ReconstructPath(Node Camefrom, Node End)
         {
             List<Node> Path = new List<Node>();
             Node Current = End;
@@ -115,6 +111,22 @@ namespace Luyks.Jonas
                 }
             }
             return winner;
+        }
+
+        public void IssueCommands()
+        {
+            for (int i = 0; i < EnemyList.Count; i++)
+            {
+                Command(EnemyList[i]);
+            }
+        }
+
+        public void Command(Enemy enemy)
+        {
+            if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
+            {
+
+            }
         }
     }
 }

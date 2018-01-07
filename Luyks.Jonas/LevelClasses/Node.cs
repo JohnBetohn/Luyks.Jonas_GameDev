@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    class Node
+    public class Node
     {
         public double GScore { get; set; }
 

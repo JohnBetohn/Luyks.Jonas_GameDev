@@ -48,8 +48,9 @@ namespace Luyks.Jonas
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Node> Nodes)
         {
+            FindCurrentNode(Nodes);
             Move(gameTime);
             MoveCollisionRectangle();
             HandleCollision(gameTime);

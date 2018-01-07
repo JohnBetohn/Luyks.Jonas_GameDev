@@ -28,6 +28,8 @@ namespace Luyks.Jonas
             set { position = value; }
         }
 
+        public Node CurrentNode { get; set; }
+
         private CollisionManager collManager;
 
         public CollisionManager CollManager
@@ -127,6 +129,52 @@ namespace Luyks.Jonas
             CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, ActiveAnimation.CurrentFrame.SourceRectangle.Width, ActiveAnimation.CurrentFrame.SourceRectangle.Height);
         }
 
-        public abstract void Update(GameTime gameTime);
+        public abstract void Update(GameTime gameTime, List<Node> Nodes);
+
+        public void FindCurrentNode(List<Node> Nodes)
+        {
+            List<Node> CurrentNodes = new List<Node>();
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                if (CollisionRectangle.Left <= Nodes[i].NodeSize.Right && CollisionRectangle.Right >= Nodes[i].NodeSize.Left && CollisionRectangle.Top <= Nodes[i].NodeSize.Bottom && CollisionRectangle.Bottom >= Nodes[i].NodeSize.Top)
+                {
+                    CurrentNodes.Add(Nodes[i]);
+                }
+            }
+
+            int MostCoverage = 0;
+            Node BestNode = new Node(new Vector2());
+            if (CurrentNodes.Count > 1)
+            {
+                for (int i = 0; i < CurrentNodes.Count; i++)
+                {
+                    int x;
+                    int y;
+
+                    Console.WriteLine("Found nodes" + CurrentNodes[i].Position);
+
+                    if (CollisionRectangle.Right > CurrentNodes[i].NodeSize.Left)
+                    {
+                        x = CollisionRectangle.Right - CurrentNodes[i].NodeSize.Left;
+                    }
+                    else x = CurrentNodes[i].NodeSize.Right - CollisionRectangle.Left;
+
+                    if (CollisionRectangle.Bottom > CurrentNodes[i].NodeSize.Top)
+                    {
+                        y = CollisionRectangle.Bottom - CurrentNodes[i].NodeSize.Top;
+                    }
+                    else y = CurrentNodes[i].NodeSize.Bottom - CollisionRectangle.Top;
+
+                    if (x * y > MostCoverage)
+                    {
+                        MostCoverage = x * y;
+                        BestNode = CurrentNodes[i];
+                    }
+                }
+                CurrentNode = BestNode;
+            }
+            
+            Console.WriteLine("Bestnode" + CurrentNode.Position);
+        }
     }
 }
