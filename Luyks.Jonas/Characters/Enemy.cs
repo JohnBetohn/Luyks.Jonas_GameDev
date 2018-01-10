@@ -10,10 +10,10 @@ namespace Luyks.Jonas
 {
     class Enemy : Character
     {
-        public List<Node> Destinations { get; set; }
+        public List<int> Destinations { get; set; }
         public Node CurrentDestination { get; set; }
         public List<Node> Path { get; set; }
-        public Enemy(Vector2 position, List<Node> destinations)
+        public Enemy(Vector2 position, List<int> destinations)
         {
             Position = position;
             WalkSpeedx = 3;
@@ -127,10 +127,16 @@ namespace Luyks.Jonas
         public override void Update(GameTime gameTime, List<Node> Nodes)
         {
             FindCurrentNode(Nodes);
+            CurrentDestination = GetDestination(0, Nodes);
             Move(gameTime);
             MoveCollisionRectangle();
             HandleCollision(gameTime);
             CollManager.ResetColl();
+        }
+
+        public Node GetDestination(int x, List<Node> Nodes)
+        {
+            return Nodes[Destinations[x]];
         }
 
         public void Draw(SpriteBatch spriteBatch)

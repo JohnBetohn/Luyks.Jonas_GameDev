@@ -67,20 +67,15 @@ namespace Luyks.Jonas
                                         }
             };
 
-            List<Node> DestinationsEnemy1 = new List<Node>
+            List<int> DestinationsEnemy1 = new List<int>
             {
-                new Node(new Vector2(350, 50)), new Node(new Vector2(0, 500))
+                36, 9
             };
             
             EnemyList1 = new List<Enemy>
             {
                 new Enemy(new Vector2(450, 50), DestinationsEnemy1)/*, new Enemy(new Vector2()), new Enemy(new Vector2()), new Enemy(new Vector2())*/
             };
-
-            for (int i = 0; i < EnemyList1.Count; i++)
-            {
-                EnemyList1[i].CurrentNode = new Node(EnemyList1[i].Position);
-            }
 
             EnemyList2 = new List<Enemy>
             {

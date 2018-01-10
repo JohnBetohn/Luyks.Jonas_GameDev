@@ -97,10 +97,6 @@ namespace Luyks.Jonas
                     Player = Map.Player2;
                     break;
             }
-            for (int i = 0; i < Enemies.Count; i++)
-            {
-                Enemies[i].CurrentDestination = Enemies[i].Destinations[0];
-            }
             Blocks = new List<Block>();
             Ladders = new List<Ladder>();
             Nodes = new List<Node>();
@@ -162,11 +158,12 @@ namespace Luyks.Jonas
                     }
                 }
             }
-            Console.WriteLine("Available Nodes:");
+
             for (int i = 0; i < Nodes.Count; i++)
             {
                 Console.WriteLine(i + ". " + Nodes[i].Position);
             }
+
             for (int i = 0; i < Enemies.Count; i++)
             {
                 Enemies[i].Texture = EnemyTexture;

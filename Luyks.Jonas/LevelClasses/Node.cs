@@ -60,14 +60,5 @@ namespace Luyks.Jonas
             }
             return false;
         }
-
-        public bool EqualsTo(Node node)
-        {
-            if (Position == node.Position)
-            {
-                return true;
-            }
-            else return false;
-        }
     }
 }

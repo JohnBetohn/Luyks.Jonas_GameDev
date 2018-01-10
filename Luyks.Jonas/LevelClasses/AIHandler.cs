@@ -15,50 +15,54 @@ namespace Luyks.Jonas
 
         public bool FindFastestPathTo(Node Destination, Node _current, Enemy enemy)
         {
-            Console.WriteLine("Now I will search for a path.");
+            //Console.WriteLine("Now I will search for a path.");
             Node Current = _current;
-            Current.GScore = 0;
-            Current.FScore = Estimate(Current, Destination);
-
-            List<Node> ClosedSet = new List<Node>();
-
-            List<Node> OpenSet = new List<Node>
+            if (Current != null)
             {
+                Current.GScore = 0;
+                Current.FScore = Estimate(Current, Destination);
+
+
+                List<Node> ClosedSet = new List<Node>();
+
+                List<Node> OpenSet = new List<Node>
+                {
                 Current
-            };
+                };
 
-            while (OpenSet.Count > 0)
-            {
-                Current = FindClosest(OpenSet);
-                Console.WriteLine("Searching...");
-                Console.WriteLine(OpenSet.Count);
-                Console.WriteLine(Current.Position);
-                if (Destination.EqualsTo(Current))
+                while (OpenSet.Count > 0)
                 {
-                    enemy.Path = ReconstructPath(Current.CameFrom, Current);
-                    Console.WriteLine("I has Found Se PAths");
-                    return true;
-                }
-
-                OpenSet.Remove(Current);
-                ClosedSet.Add(Current);
-
-                for (int i = 0; i < Current.Neighbors.Count; i++)
-                {
-                    Node neighbor = Current.Neighbors[i];
-                    //Console.WriteLine("Checking neighbors...");
-                    if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
+                    Current = FindClosest(OpenSet);
+                    //Console.WriteLine("Searching...");
+                    //Console.WriteLine(OpenSet.Count);
+                    //Console.WriteLine(Current.Position);
+                    if (Destination.Position == Current.Position)
                     {
-                        OpenSet.Add(neighbor);
+                        enemy.Path = ReconstructPath(Current.CameFrom, Current);
+                        Console.WriteLine("I has Found Se PAths");
+                        return true;
                     }
 
-                    double temp_GScore = Current.GScore + 50;
-                    if (temp_GScore < neighbor.GScore)
+                    OpenSet.Remove(Current);
+                    ClosedSet.Add(Current);
+
+                    for (int i = 0; i < Current.Neighbors.Count; i++)
                     {
-                        //Console.WriteLine("Checking if viable path");
-                        neighbor.CameFrom = Current;
-                        neighbor.GScore = temp_GScore;
-                        neighbor.FScore = temp_GScore + Estimate(neighbor, Destination);
+                        Node neighbor = Current.Neighbors[i];
+                        Console.WriteLine("Checking neighbors...");
+                        if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
+                        {
+                            OpenSet.Add(neighbor);
+                        }
+
+                        double temp_GScore = Current.GScore + 50;
+                        if (temp_GScore < neighbor.GScore)
+                        {
+                            //Console.WriteLine("Checking if viable path");
+                            neighbor.CameFrom = Current;
+                            neighbor.GScore = temp_GScore;
+                            neighbor.FScore = temp_GScore + Estimate(neighbor, Destination);
+                        }
                     }
                 }
             }
@@ -91,10 +95,7 @@ namespace Luyks.Jonas
                 Current = Current.CameFrom;
                 Path.Add(Current);
             }
-            for (int i = 0; i < Path.Count; i++)
-            {
-                Console.WriteLine(i);
-            }
+            Console.WriteLine(Path.Count);
             return Path;
         }
 
@@ -125,7 +126,31 @@ namespace Luyks.Jonas
         {
             if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
             {
-
+                Node NextInPath = enemy.Path[enemy.Path.Count - 2];
+                Node Current = enemy.CurrentNode;
+                Console.WriteLine("I am at" + Current.Position);
+                Console.WriteLine("Next step is" + NextInPath.Position);
+                enemy.Controls.ResetMove();
+                if (NextInPath.Position.X < Current.Position.X)
+                {
+                    Console.WriteLine("Hello < X");
+                    enemy.Controls.walkLeft = true;
+                }
+                if (NextInPath.Position.X > Current.Position.X)
+                {
+                    Console.WriteLine("Hello > X");
+                    enemy.Controls.walkRight = true;
+                }
+                if (NextInPath.Position.Y < Current.Position.Y)
+                {
+                    Console.WriteLine("Hello < Y");
+                    enemy.Controls.Down = true;
+                }
+                if (NextInPath.Position.Y > Current.Position.Y)
+                {
+                    Console.WriteLine("Hello > Y");
+                    enemy.Controls.Up = true;
+                }
             }
         }
     }
