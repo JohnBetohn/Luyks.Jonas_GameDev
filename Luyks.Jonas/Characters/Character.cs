@@ -28,8 +28,6 @@ namespace Luyks.Jonas
             set { position = value; }
         }
 
-        public Node CurrentNode { get; set; }
-
         private CollisionManager collManager;
 
         public CollisionManager CollManager

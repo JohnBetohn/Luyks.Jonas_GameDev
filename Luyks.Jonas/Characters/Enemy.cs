@@ -10,10 +10,9 @@ namespace Luyks.Jonas
 {
     class Enemy : Character
     {
-        public List<int> Destinations { get; set; }
-        public Node CurrentDestination { get; set; }
-        public List<Node> Path { get; set; }
-        public Enemy(Vector2 position, List<int> destinations)
+        public List<Node> Destinations { get; set; }
+        public Node Current {get; set; }
+        public Enemy(Vector2 position)
         {
             Position = position;
             WalkSpeedx = 3;
@@ -22,7 +21,6 @@ namespace Luyks.Jonas
             SpeedY = 0;
             Controls = new ControlsAI();
             InitAnimations();
-            Destinations = destinations;
         }
 
         #region Movement
@@ -124,7 +122,7 @@ namespace Luyks.Jonas
         }
         #endregion
 
-        public override void Update(GameTime gameTime, List<Node> Nodes)
+        public override void Update(GameTime gameTime)
         {
             FindCurrentNode(Nodes);
             CurrentDestination = GetDestination(0, Nodes);

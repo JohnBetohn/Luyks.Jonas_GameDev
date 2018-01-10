@@ -12,7 +12,6 @@ namespace Luyks.Jonas
 {
     class Level
     {
-        public Player Player { get; set; }
         public List<Enemy> Enemies { get; set; }
         public TileMap ActiveMap { get; set;  }
         public AIHandler AIHandler { get; set; }
@@ -54,11 +53,6 @@ namespace Luyks.Jonas
             {
                 Ladders[i].Draw(spritebatch);
             }
-            for (int i = 0; i < Enemies.Count; i++)
-            {
-                Enemies[i].Draw(spritebatch);
-            }
-            Player.Draw(spritebatch);
         }
 
         public List<Rectangle> GetLevelCollision()
@@ -71,48 +65,28 @@ namespace Luyks.Jonas
             return Collision;
         }
 
-        public void Update(GameTime gameTime)
-        {
-            Player.Update(gameTime, Nodes);
-            for (int i = 0; i < Enemies.Count; i++)
-            {
-                Enemies[i].Update(gameTime, Nodes);
-            }
-            AIHandler.IssueCommands();
-        }
-
-        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D PlayerTexture, Texture2D EnemyTexture)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
         {
             switch (x)
             {
                 case 0:
                     ActiveMap = Map.LevelMap1;
-                    Enemies = Map.EnemyList1;
-                    Player = Map.Player1;
                     break;
 
                 case 1:
                     ActiveMap = Map.LevelMap2;
-                    Enemies = Map.EnemyList2;
-                    Player = Map.Player2;
                     break;
             }
             Blocks = new List<Block>();
             Ladders = new List<Ladder>();
             Nodes = new List<Node>();
-            LoadMap(WallTexture, FloorTexture, LadderTexture, PlayerTexture, EnemyTexture);
-            AIHandler = new AIHandler
-            {
-                Nodes = Nodes,
-                EnemyList = Enemies
-            };
+            LoadMap(WallTexture, FloorTexture, LadderTexture);
             Width = ActiveMap.Map.GetLength(1) * 50;
             Height = ActiveMap.Map.GetLength(0) * 50;
         }
 
-        public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D PlayerTexture, Texture2D EnemyTexture)
+        public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
         {
-            Player.Texture = PlayerTexture;
             Block Block;
             Ladder Ladder;
             Node Node;

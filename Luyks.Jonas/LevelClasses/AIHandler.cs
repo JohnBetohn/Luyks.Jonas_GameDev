@@ -10,10 +10,15 @@ namespace Luyks.Jonas
     class AIHandler
     {
         public List<Enemy> EnemyList { get; set; }
-        public List<Node> PlayerPosition { get; set; }
+        public Vector2 PlayerPosition { get; set; }
         public List<Node> Nodes { get; set; }
 
-        public bool FindFastestPathTo(Node Destination, Node _current, Enemy enemy)
+        public void CurrentNode()
+        {
+            // find currentNode of certain enemy
+        }
+
+        public bool FindFastetPathTo(Node Destination, Node _current)
         {
             //Console.WriteLine("Now I will search for a path.");
             Node Current = _current;
@@ -27,16 +32,18 @@ namespace Luyks.Jonas
 
                 List<Node> OpenSet = new List<Node>
                 {
-                Current
-                };
+
+                    return true;
+                }
+
+                OpenSet.Remove(Current);
+                ClosedSet.Add(Current);
 
                 while (OpenSet.Count > 0)
                 {
-                    Current = FindClosest(OpenSet);
-                    //Console.WriteLine("Searching...");
-                    //Console.WriteLine(OpenSet.Count);
-                    //Console.WriteLine(Current.Position);
-                    if (Destination.Position == Current.Position)
+                    Node neighbor = Current.Neighbors[i];
+                    Console.WriteLine("Checking neighbors...");
+                    if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
                     {
                         enemy.Path = ReconstructPath(Current.CameFrom, Current);
                         Console.WriteLine("I has Found Se PAths");
@@ -85,7 +92,7 @@ namespace Luyks.Jonas
             return est;
         }
 
-        public List<Node> ReconstructPath(Node Camefrom, Node End)
+        public List<Node> ReconstructPath(int Camefrom, Node End)
         {
             List<Node> Path = new List<Node>();
             Node Current = End;
