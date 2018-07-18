@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
-    class Node
+    public class Node
     {
         public double GScore { get; set; }
 
@@ -38,12 +39,12 @@ namespace Luyks.Jonas
 
         public void FindNeighbor(List<Node> Nodes)
         {
-            Console.WriteLine(Position + " Is searching for neighbors...");
+            Debug.WriteLine(Position + " Is searching for neighbors...");
             for (int i = 0; i < Nodes.Count; i++)
             {
                 if (IsNeighbor(Nodes[i]))
                 {
-                    Console.WriteLine("Found One! " + Nodes[i].Position + " is a neighbor!");
+                    Debug.WriteLine("Found One! " + Nodes[i].Position + " is a neighbor!");
                     Neighbors.Add(Nodes[i]);
                 }
             }

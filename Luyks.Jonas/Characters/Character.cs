@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -20,8 +21,8 @@ namespace Luyks.Jonas
         public int SpeedY { get; set; }
         public Rectangle CollisionRectangle { get; set; }
         public Controls Controls { get; set; }
+        public Node CurrentNode { get; set; }
         private Vector2 position;
-
         public Vector2 Position
         {
             get { return position; }
@@ -141,11 +142,11 @@ namespace Luyks.Jonas
             }
 
             int MostCoverage = 0;
-            Console.WriteLine("Amount of current Nodes " + CurrentNodes.Count);
+            Debug.WriteLine("Amount of current Nodes " + CurrentNodes.Count);
             Node BestNode;
             if (CurrentNodes.Count == 1)
             {
-                Console.WriteLine("Easy peasy only one node");
+                Debug.WriteLine("Easy peasy only one node");
                 BestNode = CurrentNodes[0];
             }
             else
@@ -178,7 +179,7 @@ namespace Luyks.Jonas
                     }
                     if (BestNode.Position != null)
                     {
-                        Console.WriteLine("It worked normally");
+                        Debug.WriteLine("It worked normally");
                         CurrentNode = BestNode;
                     }
                 }

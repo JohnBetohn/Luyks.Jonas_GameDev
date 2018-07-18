@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -47,7 +48,7 @@ namespace Luyks.Jonas
             x += temp;
             if (x >= CurrentFrame.SourceRectangle.Width / FramesPerSecond)
             {
-                Console.WriteLine(x);
+                Debug.WriteLine(x);
                 x = 0;
                 counter++;
                 AnimationComplete = false;

@@ -53,7 +53,7 @@ namespace Luyks.Jonas
                 centre.Y = y - (viewport.Height / 2);
             }
             else centre.Y = position.Y;
-            transform = Matrix.CreateTranslation(new Vector3(-centre.X + (viewport.Width / 2),
+                            transform = Matrix.CreateTranslation(new Vector3(-centre.X + (viewport.Width / 2),
                 -centre.Y + (viewport.Height / 2), 0));
         }
     }

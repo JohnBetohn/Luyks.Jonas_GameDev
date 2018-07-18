@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -17,7 +18,7 @@ namespace Luyks.Jonas
         //Initialize Objects
         Player player;
         Camera2D camera;
-        Enemy enemy = new Enemy(new Vector2(150, 100));
+
         private Level level = new Level();
 
         private CollisionManager collisionManager;
@@ -39,6 +40,7 @@ namespace Luyks.Jonas
             // TODO: Add your initialization logic here
             player = new Player(new Vector2(70, 100));
             camera = new Camera2D(GraphicsDevice.Viewport);
+
             base.Initialize();
         }
 
@@ -54,23 +56,24 @@ namespace Luyks.Jonas
             // TODO: use this.Content to load your game content here
             player.Texture = Content.Load<Texture2D>("Ed");   //Sprite from http://spritedatabase.net/file/2967/Ed
 
-            enemy.Texture = Content.Load<Texture2D>("Enemy");
+            Texture2D enemyTexture = Content.Load<Texture2D>("Enemy");
             Texture2D floortexture = Content.Load<Texture2D>("castleMID");
             Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
             Texture2D ladderTexture = Content.Load<Texture2D>("ladder_Mid");
 
-            level.SetActiveMap(0, walltexture, floortexture, ladderTexture);
+            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture);
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
-            enemy.CollManager = collisionManager;
+
             for (int i = 0; i < level.Nodes.Count; i++)
             {
                 level.Nodes[i].FindNeighbor(level.Nodes);
             }
+
             AIHandler aIHandler = new AIHandler();
             Node testStart = level.Nodes[2];
             Node testENd = level.Nodes[6];
-            Console.WriteLine( aIHandler.FindFastetPathTo(testENd, testStart) );
+            Debug.WriteLine( aIHandler.FindFastetPathTo(testENd, testStart) );
         }
 
         /// <summary>
@@ -93,9 +96,9 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
-            player.Update(gameTime);
+            player.Update(gameTime, level.Nodes);
             camera.Update(player.Position, level.Width, level.Height);
-            enemy.Update(gameTime);
+            //enemy.Update(gameTime, level.Nodes);
 
             base.Update(gameTime);
         }
@@ -113,7 +116,6 @@ namespace Luyks.Jonas
 
             level.Draw(spriteBatch);
             player.Draw(spriteBatch);
-            enemy.Draw(spriteBatch);
 
             spriteBatch.End();
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,9 @@ namespace Luyks.Jonas
 {
     class Map
     {
+        public List<Enemy> EnemyList1 { get; set; }
+        public List<Enemy> EnemyList2 { get; set; }
+
         private TileMap levelMap1;
         public TileMap LevelMap1
         {
@@ -27,6 +31,7 @@ namespace Luyks.Jonas
         {
             levelMap1 = new TileMap
             {
+
                 Map = new int[,] {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                                   {0,0,0,0,0,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                                   {0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -42,6 +47,11 @@ namespace Luyks.Jonas
                                   {1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                                         }
             };
+
+            Enemy enemy1 = new Enemy(new Vector2(200, 100));
+
+            EnemyList1 = new List<Enemy>();
+            EnemyList1.Add(enemy1);
 
             levelMap2 = new TileMap
             {

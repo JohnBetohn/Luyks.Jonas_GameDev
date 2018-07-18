@@ -12,6 +12,7 @@ namespace Luyks.Jonas
     {
         public List<Node> Destinations { get; set; }
         public Node Current {get; set; }
+        public Node CurrentDestination { get; set; }
         public Enemy(Vector2 position)
         {
             Position = position;
@@ -122,7 +123,7 @@ namespace Luyks.Jonas
         }
         #endregion
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Node> Nodes)
         {
             FindCurrentNode(Nodes);
             CurrentDestination = GetDestination(0, Nodes);
@@ -134,7 +135,15 @@ namespace Luyks.Jonas
 
         public Node GetDestination(int x, List<Node> Nodes)
         {
-            return Nodes[Destinations[x]];
+            Node dest = Destinations[x];
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                if (Nodes[i].Position == dest.Position)
+                {
+                    return Nodes[i];
+                }
+            }
+            return null;
         }
 
         public void Draw(SpriteBatch spriteBatch)

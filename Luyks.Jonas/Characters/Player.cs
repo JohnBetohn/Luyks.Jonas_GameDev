@@ -48,7 +48,7 @@ namespace Luyks.Jonas
             }
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Node> Nodes)
         {
             Move(gameTime);
             MoveCollisionRectangle();

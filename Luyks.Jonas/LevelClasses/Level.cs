@@ -7,11 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
     class Level
     {
+        public Texture2D EnemyTexture { get; set; }
         public List<Enemy> Enemies { get; set; }
         public TileMap ActiveMap { get; set;  }
         public AIHandler AIHandler { get; set; }
@@ -65,21 +67,24 @@ namespace Luyks.Jonas
             return Collision;
         }
 
-        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture)
         {
             switch (x)
             {
                 case 0:
                     ActiveMap = Map.LevelMap1;
+                    Enemies = Map.EnemyList1;
                     break;
 
                 case 1:
                     ActiveMap = Map.LevelMap2;
+                    Enemies = Map.EnemyList2;
                     break;
             }
             Blocks = new List<Block>();
             Ladders = new List<Ladder>();
             Nodes = new List<Node>();
+            EnemyTexture = enemyTexture;
             LoadMap(WallTexture, FloorTexture, LadderTexture);
             Width = ActiveMap.Map.GetLength(1) * 50;
             Height = ActiveMap.Map.GetLength(0) * 50;
@@ -135,7 +140,7 @@ namespace Luyks.Jonas
 
             for (int i = 0; i < Nodes.Count; i++)
             {
-                Console.WriteLine(i + ". " + Nodes[i].Position);
+                Debug.WriteLine(i + ". " + Nodes[i].Position);
             }
 
             for (int i = 0; i < Enemies.Count; i++)

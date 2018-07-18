@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Luyks.Jonas
 {
@@ -20,7 +21,7 @@ namespace Luyks.Jonas
 
         public bool FindFastetPathTo(Node Destination, Node _current)
         {
-            //Console.WriteLine("Now I will search for a path.");
+            //Debug.WriteLine("Now I will search for a path.");
             Node Current = _current;
             if (Current != null)
             {
@@ -30,23 +31,19 @@ namespace Luyks.Jonas
 
                 List<Node> ClosedSet = new List<Node>();
 
-                List<Node> OpenSet = new List<Node>
-                {
-
-                    return true;
-                }
+                List<Node> OpenSet = new List<Node>();
 
                 OpenSet.Remove(Current);
                 ClosedSet.Add(Current);
 
                 while (OpenSet.Count > 0)
                 {
-                    Node neighbor = Current.Neighbors[i];
-                    Console.WriteLine("Checking neighbors...");
+                    Node neighbor = Current.Neighbors[0];
+                    Debug.WriteLine("Checking neighbors...");
                     if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
                     {
-                        enemy.Path = ReconstructPath(Current.CameFrom, Current);
-                        Console.WriteLine("I has Found Se PAths");
+                        //enemy.Path = ReconstructPath(Current.CameFrom, Current);
+                        Debug.WriteLine("I has Found Se PAths");
                         return true;
                     }
 
@@ -55,8 +52,8 @@ namespace Luyks.Jonas
 
                     for (int i = 0; i < Current.Neighbors.Count; i++)
                     {
-                        Node neighbor = Current.Neighbors[i];
-                        Console.WriteLine("Checking neighbors...");
+                        //Node neighbor = Current.Neighbors[i];
+                        Debug.WriteLine("Checking neighbors...");
                         if (!ClosedSet.Contains(neighbor) && !OpenSet.Contains(neighbor))
                         {
                             OpenSet.Add(neighbor);
@@ -65,7 +62,7 @@ namespace Luyks.Jonas
                         double temp_GScore = Current.GScore + 50;
                         if (temp_GScore < neighbor.GScore)
                         {
-                            //Console.WriteLine("Checking if viable path");
+                            //Debug.WriteLine("Checking if viable path");
                             neighbor.CameFrom = Current;
                             neighbor.GScore = temp_GScore;
                             neighbor.FScore = temp_GScore + Estimate(neighbor, Destination);
@@ -102,7 +99,7 @@ namespace Luyks.Jonas
                 Current = Current.CameFrom;
                 Path.Add(Current);
             }
-            Console.WriteLine(Path.Count);
+            Debug.WriteLine(Path.Count);
             return Path;
         }
 
@@ -131,34 +128,34 @@ namespace Luyks.Jonas
 
         public void Command(Enemy enemy)
         {
-            if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
-            {
-                Node NextInPath = enemy.Path[enemy.Path.Count - 2];
-                Node Current = enemy.CurrentNode;
-                Console.WriteLine("I am at" + Current.Position);
-                Console.WriteLine("Next step is" + NextInPath.Position);
-                enemy.Controls.ResetMove();
-                if (NextInPath.Position.X < Current.Position.X)
-                {
-                    Console.WriteLine("Hello < X");
-                    enemy.Controls.walkLeft = true;
-                }
-                if (NextInPath.Position.X > Current.Position.X)
-                {
-                    Console.WriteLine("Hello > X");
-                    enemy.Controls.walkRight = true;
-                }
-                if (NextInPath.Position.Y < Current.Position.Y)
-                {
-                    Console.WriteLine("Hello < Y");
-                    enemy.Controls.Down = true;
-                }
-                if (NextInPath.Position.Y > Current.Position.Y)
-                {
-                    Console.WriteLine("Hello > Y");
-                    enemy.Controls.Up = true;
-                }
-            }
+            //if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
+            //{
+            //    Node NextInPath = enemy.Path[enemy.Path.Count - 2];
+            //    Node Current = enemy.CurrentNode;
+            //    Debug.WriteLine("I am at" + Current.Position);
+            //    Debug.WriteLine("Next step is" + NextInPath.Position);
+            //    enemy.Controls.ResetMove();
+            //    if (NextInPath.Position.X < Current.Position.X)
+            //    {
+            //        Debug.WriteLine("Hello < X");
+            //        enemy.Controls.walkLeft = true;
+            //    }
+            //    if (NextInPath.Position.X > Current.Position.X)
+            //    {
+            //        Debug.WriteLine("Hello > X");
+            //        enemy.Controls.walkRight = true;
+            //    }
+            //    if (NextInPath.Position.Y < Current.Position.Y)
+            //    {
+            //        Debug.WriteLine("Hello < Y");
+            //        enemy.Controls.Down = true;
+            //    }
+            //    if (NextInPath.Position.Y > Current.Position.Y)
+            //    {
+            //        Debug.WriteLine("Hello > Y");
+            //        enemy.Controls.Up = true;
+            //    }
+            //}
         }
     }
 }
