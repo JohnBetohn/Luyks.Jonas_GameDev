@@ -64,6 +64,10 @@ namespace Luyks.Jonas
             level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture);
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
+            foreach (Enemy enemy in level.Enemies)
+            {
+                enemy.CollManager = collisionManager;
+            }
 
             for (int i = 0; i < level.Nodes.Count; i++)
             {
@@ -71,9 +75,9 @@ namespace Luyks.Jonas
             }
 
             AIHandler aIHandler = new AIHandler();
-            Node testStart = level.Nodes[2];
-            Node testENd = level.Nodes[6];
-            Debug.WriteLine( aIHandler.FindFastetPathTo(testENd, testStart) );
+            //Node testStart = level.Nodes[2];
+            //Node testENd = level.Nodes[6];
+            //Debug.WriteLine( aIHandler.FindFastetPathTo(testENd, testStart) );
         }
 
         /// <summary>
@@ -96,9 +100,12 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
-            player.Update(gameTime, level.Nodes);
+            player.Update(gameTime);
             camera.Update(player.Position, level.Width, level.Height);
-            //enemy.Update(gameTime, level.Nodes);
+            foreach (Enemy enemy in level.Enemies)
+            {
+                enemy.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }

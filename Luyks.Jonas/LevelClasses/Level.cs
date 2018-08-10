@@ -55,6 +55,10 @@ namespace Luyks.Jonas
             {
                 Ladders[i].Draw(spritebatch);
             }
+            foreach (Enemy enemy in Enemies)
+            {
+                enemy.Draw(spritebatch);
+            }
         }
 
         public List<Rectangle> GetLevelCollision()
@@ -85,12 +89,12 @@ namespace Luyks.Jonas
             Ladders = new List<Ladder>();
             Nodes = new List<Node>();
             EnemyTexture = enemyTexture;
-            LoadMap(WallTexture, FloorTexture, LadderTexture);
+            LoadMap(WallTexture, FloorTexture, LadderTexture, EnemyTexture);
             Width = ActiveMap.Map.GetLength(1) * 50;
             Height = ActiveMap.Map.GetLength(0) * 50;
         }
 
-        public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture)
+        public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D EnemyTexture)
         {
             Block Block;
             Ladder Ladder;

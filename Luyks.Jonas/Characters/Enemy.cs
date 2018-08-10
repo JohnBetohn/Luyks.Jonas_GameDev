@@ -22,42 +22,10 @@ namespace Luyks.Jonas
             SpeedY = 0;
             Controls = new ControlsAI();
             InitAnimations();
+            SetActiveAnimation(0);
         }
 
         #region Movement
-        public override void HandleCollision(GameTime gameTime)
-        {
-            Rectangle collidedV = CollManager.CheckCollisionVertical(CollisionRectangle);
-            Rectangle collidedH = CollManager.CheckCollsionHorizontal(CollisionRectangle);
-            Controls.OnLadder = CollManager.CheckLadder(CollisionRectangle);
-
-            if (CollManager.HasCollLeft)
-            {
-                Position = new Vector2(collidedH.Right + 5, Position.Y);
-            }
-
-            if (CollManager.HasCollRight)
-            {
-                Position = new Vector2(collidedH.Left - CollisionRectangle.Width + 5, Position.Y);
-            }
-
-            if (CollManager.HasCollTop)
-            {
-                Position = new Vector2(Position.X, collidedV.Bottom);
-                SpeedY = 0;
-            }
-
-            if (CollManager.HasCollBot)
-            {
-                Controls.Falling = false;
-                Position = new Vector2(Position.X, collidedV.Top - CollisionRectangle.Height);
-            }
-            
-            if (!CollManager.HasCollBot && !Controls.OnLadder)
-            {
-                Controls.Falling = true;                
-            }
-        }
 
         public new void MoveCollisionRectangle()
         {
@@ -123,10 +91,10 @@ namespace Luyks.Jonas
         }
         #endregion
 
-        public override void Update(GameTime gameTime, List<Node> Nodes)
+        public override void Update(GameTime gameTime)
         {
-            FindCurrentNode(Nodes);
-            CurrentDestination = GetDestination(0, Nodes);
+            //FindCurrentNode(Nodes);
+            //CurrentDestination = GetDestination(0, Nodes);
             Move(gameTime);
             MoveCollisionRectangle();
             HandleCollision(gameTime);

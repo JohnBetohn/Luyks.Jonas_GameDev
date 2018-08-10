@@ -47,7 +47,39 @@ namespace Luyks.Jonas
 
         public Animation ActiveAnimation { get; set; }
 
-        public abstract void HandleCollision(GameTime gameTime);
+        public void HandleCollision(GameTime gameTime)
+        {
+            Rectangle collidedV = CollManager.CheckCollisionVertical(CollisionRectangle);
+            Rectangle collidedH = CollManager.CheckCollsionHorizontal(CollisionRectangle);
+            Controls.OnLadder = CollManager.CheckLadder(CollisionRectangle);
+
+            if (CollManager.HasCollLeft)
+            {
+                Position = new Vector2(collidedH.Right + 5, Position.Y);
+            }
+
+            if (CollManager.HasCollRight)
+            {
+                Position = new Vector2(collidedH.Left - CollisionRectangle.Width + 5, Position.Y);
+            }
+
+            if (CollManager.HasCollTop)
+            {
+                Position = new Vector2(Position.X, collidedV.Bottom);
+                SpeedY = 0;
+            }
+
+            if (CollManager.HasCollBot)
+            {
+                Controls.Falling = false;
+                Position = new Vector2(Position.X, collidedV.Top - CollisionRectangle.Height);
+            }
+
+            if (!CollManager.HasCollBot && !Controls.OnLadder)
+            {
+                Controls.Falling = true;
+            }
+        }
         public abstract void InitAnimations();
         public void SetActiveAnimation(int x)
         {
@@ -128,62 +160,62 @@ namespace Luyks.Jonas
             CollisionRectangle = new Rectangle((int)Position.X, (int)Position.Y, ActiveAnimation.CurrentFrame.SourceRectangle.Width, ActiveAnimation.CurrentFrame.SourceRectangle.Height);
         }
 
-        public abstract void Update(GameTime gameTime, List<Node> Nodes);
+        public abstract void Update(GameTime gameTime);
 
-        public void FindCurrentNode(List<Node> Nodes)
-        {
-            List<Node> CurrentNodes = new List<Node>();
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                if (CollisionRectangle.Left <= Nodes[i].NodeSize.Right && CollisionRectangle.Right >= Nodes[i].NodeSize.Left && CollisionRectangle.Top <= Nodes[i].NodeSize.Bottom && CollisionRectangle.Bottom >= Nodes[i].NodeSize.Top)
-                {
-                    CurrentNodes.Add(Nodes[i]);
-                }
-            }
+        //public void FindCurrentNode(List<Node> Nodes)
+        //{
+        //    List<Node> CurrentNodes = new List<Node>();
+        //    for (int i = 0; i < Nodes.Count; i++)
+        //    {
+        //        if (CollisionRectangle.Left <= Nodes[i].NodeSize.Right && CollisionRectangle.Right >= Nodes[i].NodeSize.Left && CollisionRectangle.Top <= Nodes[i].NodeSize.Bottom && CollisionRectangle.Bottom >= Nodes[i].NodeSize.Top)
+        //        {
+        //            CurrentNodes.Add(Nodes[i]);
+        //        }
+        //    }
 
-            int MostCoverage = 0;
-            Debug.WriteLine("Amount of current Nodes " + CurrentNodes.Count);
-            Node BestNode;
-            if (CurrentNodes.Count == 1)
-            {
-                Debug.WriteLine("Easy peasy only one node");
-                BestNode = CurrentNodes[0];
-            }
-            else
-            {
-                BestNode = new Node(new Vector2());
-                if (CurrentNodes.Count > 1)
-                {
-                    for (int i = 0; i < CurrentNodes.Count; i++)
-                    {
-                        int x;
-                        int y;
+        //    int MostCoverage = 0;
+        //    Debug.WriteLine("Amount of current Nodes " + CurrentNodes.Count);
+        //    Node BestNode;
+        //    if (CurrentNodes.Count == 1)
+        //    {
+        //        Debug.WriteLine("Easy peasy only one node");
+        //        BestNode = CurrentNodes[0];
+        //    }
+        //    else
+        //    {
+        //        BestNode = new Node(new Vector2());
+        //        if (CurrentNodes.Count > 1)
+        //        {
+        //            for (int i = 0; i < CurrentNodes.Count; i++)
+        //            {
+        //                int x;
+        //                int y;
                         
-                        if (CollisionRectangle.Right > CurrentNodes[i].NodeSize.Left)
-                        {
-                            x = CollisionRectangle.Right - CurrentNodes[i].NodeSize.Left;
-                        }
-                        else x = CurrentNodes[i].NodeSize.Right - CollisionRectangle.Left;
+        //                if (CollisionRectangle.Right > CurrentNodes[i].NodeSize.Left)
+        //                {
+        //                    x = CollisionRectangle.Right - CurrentNodes[i].NodeSize.Left;
+        //                }
+        //                else x = CurrentNodes[i].NodeSize.Right - CollisionRectangle.Left;
 
-                        if (CollisionRectangle.Bottom > CurrentNodes[i].NodeSize.Top)
-                        {
-                            y = CollisionRectangle.Bottom - CurrentNodes[i].NodeSize.Top;
-                        }
-                        else y = CurrentNodes[i].NodeSize.Bottom - CollisionRectangle.Top;
+        //                if (CollisionRectangle.Bottom > CurrentNodes[i].NodeSize.Top)
+        //                {
+        //                    y = CollisionRectangle.Bottom - CurrentNodes[i].NodeSize.Top;
+        //                }
+        //                else y = CurrentNodes[i].NodeSize.Bottom - CollisionRectangle.Top;
 
-                        if (x * y > MostCoverage)
-                        {
-                            MostCoverage = x * y;
-                            BestNode = CurrentNodes[i];
-                        }
-                    }
-                    if (BestNode.Position != null)
-                    {
-                        Debug.WriteLine("It worked normally");
-                        CurrentNode = BestNode;
-                    }
-                }
-            }
-        }
+        //                if (x * y > MostCoverage)
+        //                {
+        //                    MostCoverage = x * y;
+        //                    BestNode = CurrentNodes[i];
+        //                }
+        //            }
+        //            if (BestNode.Position != null)
+        //            {
+        //                Debug.WriteLine("It worked normally");
+        //                CurrentNode = BestNode;
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
