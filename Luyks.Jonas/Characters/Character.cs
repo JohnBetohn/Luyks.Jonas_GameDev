@@ -56,6 +56,7 @@ namespace Luyks.Jonas
             if (CollManager.HasCollLeft)
             {
                 Position = new Vector2(collidedH.Right + 5, Position.Y);
+                Debug.WriteLine("I have collision LEFT");
             }
 
             if (CollManager.HasCollRight)

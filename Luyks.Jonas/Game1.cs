@@ -26,6 +26,8 @@ namespace Luyks.Jonas
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1280;
             Content.RootDirectory = "Content";
         }
 
@@ -69,12 +71,10 @@ namespace Luyks.Jonas
                 enemy.CollManager = collisionManager;
             }
 
-            for (int i = 0; i < level.Nodes.Count; i++)
-            {
-                level.Nodes[i].FindNeighbor(level.Nodes);
-            }
-
-            AIHandler aIHandler = new AIHandler();
+            //for (int i = 0; i < level.Nodes.Count; i++)
+            //{
+            //    level.Nodes[i].FindNeighbor(level.Nodes);
+            //}
             //Node testStart = level.Nodes[2];
             //Node testENd = level.Nodes[6];
             //Debug.WriteLine( aIHandler.FindFastetPathTo(testENd, testStart) );
@@ -100,6 +100,7 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
+            level.IssueCommands();
             player.Update(gameTime);
             camera.Update(player.Position, level.Width, level.Height);
             foreach (Enemy enemy in level.Enemies)

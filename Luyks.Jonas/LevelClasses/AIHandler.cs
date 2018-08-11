@@ -11,8 +11,9 @@ namespace Luyks.Jonas
     class AIHandler
     {
         public List<Enemy> EnemyList { get; set; }
-        public Vector2 PlayerPosition { get; set; }
-        public List<Node> Nodes { get; set; }
+        //public List<Node> Nodes { get; set; }
+
+        #region Attempt at Pathfinding
 
         //public void CurrentNode()
         //{
@@ -118,6 +119,8 @@ namespace Luyks.Jonas
         //    return winner;
         //}
 
+        #endregion
+
         public void IssueCommands()
         {
             for (int i = 0; i < EnemyList.Count; i++)
@@ -128,6 +131,32 @@ namespace Luyks.Jonas
 
         public void Command(Enemy enemy)
         {
+            enemy.Controls.ResetMove();
+
+            Vector2[] destinations = enemy.Destinations;
+            Vector2 destination = destinations[enemy.CurrentDestination];
+
+            if (destination.Y == enemy.Position.Y)
+            {
+                if (destination.X < enemy.Position.X)
+                {
+                    enemy.Controls.walkLeft = true;
+                }
+                else
+                {
+                    enemy.Controls.walkRight = true;
+                }
+            }
+            else if (destination.Y < enemy.Position.Y)
+            {
+                enemy.Controls.Down = true;
+            }
+            else if (destination.Y > enemy.Position.Y)
+            {
+                enemy.Controls.Up = true;
+            }
+
+            #region Remnant of pathfinding code
             //if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
             //{
             //    Node NextInPath = enemy.Path[enemy.Path.Count - 2];
@@ -156,6 +185,7 @@ namespace Luyks.Jonas
             //        enemy.Controls.Up = true;
             //    }
             //}
+            #endregion
         }
     }
 }

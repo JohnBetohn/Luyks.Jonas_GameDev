@@ -99,7 +99,29 @@ namespace Luyks.Jonas
     {
         public override void CheckInputs()
         {
-            
+            //KeyboardState stateKey = Keyboard.GetState();
+            //if (stateKey.IsKeyDown(Keys.Left) && stateKey.IsKeyUp(Keys.LeftShift))
+            //{
+            //    walkLeft = true;
+            //}
+
+            //if (stateKey.IsKeyUp(Keys.Left))
+            //{
+            //    walkLeft = false;
+            //    RunLeft = false;
+            //}
+
+            //if (stateKey.IsKeyDown(Keys.Right) && stateKey.IsKeyUp(Keys.LeftShift))
+            //{
+            //    walkRight = true;
+            //}
+
+            //if (stateKey.IsKeyUp(Keys.Right))
+            //{
+            //    walkRight = false;
+            //    RunRight = false;
+            //}
+
         }
     }
 }

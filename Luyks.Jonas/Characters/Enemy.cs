@@ -10,14 +10,16 @@ namespace Luyks.Jonas
 {
     class Enemy : Character
     {
-        public List<Node> Destinations { get; set; }
-        public Node Current {get; set; }
-        public Node CurrentDestination { get; set; }
-        public Enemy(Vector2 position)
+        public Vector2[] Destinations { get; set; }
+        //public Node Current {get; set; }
+        public int CurrentDestination { get; set; }
+
+        public Enemy(Vector2 position, Vector2[] destinations)
         {
             Position = position;
-            WalkSpeedx = 3;
-            ClimbSpeed = 3;
+            Destinations = destinations;
+            WalkSpeedx = 1;
+            ClimbSpeed = 1;
             FallSpeed = 1;
             SpeedY = 0;
             Controls = new ControlsAI();
@@ -68,7 +70,7 @@ namespace Luyks.Jonas
             walk.AddFrame(new Rectangle(1, 95, 69, 88));
             walk.AddFrame(new Rectangle(1, 95, 69, 88));
             walk.AddFrame(new Rectangle(357, 2, 66, 92));
-            walk.FramesPerSecond = 15;
+            walk.FramesPerSecond = 10;
 
             looking.AddFrame(new Rectangle(0, 190, 66, 92));
             looking.AddFrame(new Rectangle(67, 190, 66, 91));
@@ -91,6 +93,15 @@ namespace Luyks.Jonas
         }
         #endregion
 
+        public void NextDestination()
+        {
+            if (CurrentDestination < Destinations.Length - 1)
+            {
+                CurrentDestination++;
+            }
+            else CurrentDestination = 0;
+        }
+
         public override void Update(GameTime gameTime)
         {
             //FindCurrentNode(Nodes);
@@ -100,20 +111,6 @@ namespace Luyks.Jonas
             HandleCollision(gameTime);
             CollManager.ResetColl();
         }
-
-        public Node GetDestination(int x, List<Node> Nodes)
-        {
-            Node dest = Destinations[x];
-            for (int i = 0; i < Nodes.Count; i++)
-            {
-                if (Nodes[i].Position == dest.Position)
-                {
-                    return Nodes[i];
-                }
-            }
-            return null;
-        }
-
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Controls.walkLeft)

@@ -16,7 +16,6 @@ namespace Luyks.Jonas
         public Texture2D EnemyTexture { get; set; }
         public List<Enemy> Enemies { get; set; }
         public TileMap ActiveMap { get; set;  }
-        public AIHandler AIHandler { get; set; }
         public Map Map { get; set; }
         public List<Node> Nodes { get; set; }
         public int Width { get; set; }
@@ -151,6 +150,78 @@ namespace Luyks.Jonas
             {
                 Enemies[i].Texture = EnemyTexture;
             }
+        }
+
+        public void IssueCommands()
+        {
+            for (int i = 0; i < Enemies.Count; i++)
+            {
+                Command(i);
+            }
+        }
+
+        public void Command(int i)
+        {
+            Vector2 destination = Enemies[i].Destinations[Enemies[i].CurrentDestination];
+            Enemies[i].Controls.ResetMove();
+            if (/*destination.Y == Enemies[i].Position.Y*/ true)
+            {
+                if(destination.X == Enemies[i].Position.X)
+                {
+                    Enemies[i].NextDestination();
+                }
+                else if (destination.X < Enemies[i].Position.X)
+                {
+                    Enemies[i].Controls.walkLeft = true;
+                    Debug.WriteLine("I,m trying to go LEFT");
+                }
+                else
+                {
+                    Enemies[i].Controls.walkRight = true;
+                    Debug.WriteLine("I,m trying to go RIGHT");
+                }
+            }
+            //else if (destination.Y < Enemies[i].Position.Y)
+            //{
+            //    Enemies[i].Controls.Down = true;
+            //    Debug.WriteLine("I,m trying to go DOWN");
+            //}
+            //else if (destination.Y > Enemies[i].Position.Y)
+            //{
+            //    Enemies[i].Controls.Up = true;
+            //    Debug.WriteLine("I,m trying to go UP");
+            //}
+
+            #region Remnant of pathfinding code
+            //if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))
+            //{
+            //    Node NextInPath = enemy.Path[enemy.Path.Count - 2];
+            //    Node Current = enemy.CurrentNode;
+            //    Debug.WriteLine("I am at" + Current.Position);
+            //    Debug.WriteLine("Next step is" + NextInPath.Position);
+            //    enemy.Controls.ResetMove();
+            //    if (NextInPath.Position.X < Current.Position.X)
+            //    {
+            //        Debug.WriteLine("Hello < X");
+            //        enemy.Controls.walkLeft = true;
+            //    }
+            //    if (NextInPath.Position.X > Current.Position.X)
+            //    {
+            //        Debug.WriteLine("Hello > X");
+            //        enemy.Controls.walkRight = true;
+            //    }
+            //    if (NextInPath.Position.Y < Current.Position.Y)
+            //    {
+            //        Debug.WriteLine("Hello < Y");
+            //        enemy.Controls.Down = true;
+            //    }
+            //    if (NextInPath.Position.Y > Current.Position.Y)
+            //    {
+            //        Debug.WriteLine("Hello > Y");
+            //        enemy.Controls.Up = true;
+            //    }
+            //}
+            #endregion
         }
     }
 }
