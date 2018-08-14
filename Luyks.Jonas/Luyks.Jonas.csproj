@@ -58,6 +58,7 @@
     <Compile Include="LevelClasses\Map.cs" />
     <Compile Include="LevelClasses\Node.cs" />
     <Compile Include="LevelClasses\TileMap.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

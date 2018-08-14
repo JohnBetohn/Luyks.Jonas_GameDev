@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,19 @@ namespace Luyks.Jonas
             CollManager.ResetColl();
         }
 
+        public bool CheckDeath(List<Enemy> Enemies)
+        {
+            if (CollManager.CheckCollisionEnemy(CollisionRectangle, Enemies))
+            {
+                Debug.WriteLine("Am Dead");
+                return true;
+            }
+            return false;
+        }
+
         #endregion
 
-        public Player(Vector2 position)
+        public Player(Vector2 position, int layout)
         {
             Position = position;
             WalkSpeedx = 3;
@@ -34,7 +45,18 @@ namespace Luyks.Jonas
             FallSpeed = 1;
             InitAnimations();
             SetActiveAnimation(0);
-            Controls = new ControlsWASD();
+            switch (layout)
+            {
+                case 0:
+                    Controls = new ControlsWASD();
+                    break;
+                case 1:
+                    Controls = new ControlsZQSD();
+                    break;
+                default:
+                    break;
+            }
+            
         }
         #region Animations
 

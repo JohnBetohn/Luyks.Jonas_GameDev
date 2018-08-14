@@ -37,6 +37,69 @@ namespace Luyks.Jonas
         public override void CheckInputs()
         {
             KeyboardState stateKey = Keyboard.GetState();
+            if (stateKey.IsKeyDown(Keys.A) && stateKey.IsKeyUp(Keys.LeftShift))
+            {
+                walkLeft = true;
+            }
+            if (stateKey.IsKeyDown(Keys.D) && stateKey.IsKeyUp(Keys.LeftShift))
+            {
+                walkRight = true;
+            }
+            if (stateKey.IsKeyDown(Keys.A) && stateKey.IsKeyDown(Keys.LeftShift))
+            {
+                RunLeft = true;
+            }
+            if (stateKey.IsKeyDown(Keys.D) && stateKey.IsKeyDown(Keys.LeftShift))
+            {
+                RunRight = true;
+            }
+            if (stateKey.IsKeyDown(Keys.Space) && !Falling)
+            {
+                Jump = true;
+            }
+            if (stateKey.IsKeyDown(Keys.W))
+            {
+                Up = true;
+            }
+            if (stateKey.IsKeyDown(Keys.S))
+            {
+                Down = true;
+            }
+            if (stateKey.IsKeyUp(Keys.A))
+            {
+                walkLeft = false;
+                RunLeft = false;
+            }
+            if (stateKey.IsKeyUp(Keys.D))
+            {
+                walkRight = false;
+                RunRight = false;
+            }
+            if (stateKey.IsKeyUp(Keys.Space))
+            {
+                Jump = false;
+            }
+            if (stateKey.IsKeyUp(Keys.W))
+            {
+                Up = false;
+            }
+            if (stateKey.IsKeyUp(Keys.S))
+            {
+                Down = false;
+            }
+
+            if (walkLeft && walkRight || RunLeft && RunRight)
+            {
+                ResetMove();
+            }
+        }
+    }
+
+    public class ControlsZQSD : Controls
+    {
+        public override void CheckInputs()
+        {
+            KeyboardState stateKey = Keyboard.GetState();
             if (stateKey.IsKeyDown(Keys.Q) && stateKey.IsKeyUp(Keys.LeftShift))
             {
                 walkLeft = true;
@@ -99,28 +162,6 @@ namespace Luyks.Jonas
     {
         public override void CheckInputs()
         {
-            //KeyboardState stateKey = Keyboard.GetState();
-            //if (stateKey.IsKeyDown(Keys.Left) && stateKey.IsKeyUp(Keys.LeftShift))
-            //{
-            //    walkLeft = true;
-            //}
-
-            //if (stateKey.IsKeyUp(Keys.Left))
-            //{
-            //    walkLeft = false;
-            //    RunLeft = false;
-            //}
-
-            //if (stateKey.IsKeyDown(Keys.Right) && stateKey.IsKeyUp(Keys.LeftShift))
-            //{
-            //    walkRight = true;
-            //}
-
-            //if (stateKey.IsKeyUp(Keys.Right))
-            //{
-            //    walkRight = false;
-            //    RunRight = false;
-            //}
 
         }
     }

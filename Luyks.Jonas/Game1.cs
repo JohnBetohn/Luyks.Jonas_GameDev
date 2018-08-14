@@ -19,6 +19,22 @@ namespace Luyks.Jonas
         Player player;
         Camera2D camera;
 
+        enum GameState
+        {
+            MainMenu,
+            Game
+        }
+
+        //Menu
+        private GameState gameState = GameState.MainMenu;
+        private Menu btnStart, btnQuit, btnQwerty, btnAzerty;
+
+        private bool qwerty = false;
+        private bool paused = false;
+        private Texture2D pausedTexture;
+        private SpriteFont font;
+        private Rectangle pausedRectangle;
+
         private Level level = new Level();
 
         private CollisionManager collisionManager;
@@ -40,7 +56,7 @@ namespace Luyks.Jonas
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player = new Player(new Vector2(70, 100));
+            player = new Player(new Vector2(70, 100), 0);
             camera = new Camera2D(GraphicsDevice.Viewport);
 
             base.Initialize();
@@ -59,10 +75,32 @@ namespace Luyks.Jonas
             player.Texture = Content.Load<Texture2D>("Ed");   //Sprite from http://spritedatabase.net/file/2967/Ed
 
             Texture2D enemyTexture = Content.Load<Texture2D>("Enemy");
+
+            Texture2D ladderTexture = Content.Load<Texture2D>("ladder_mid");
+
+            //level1 textures
             Texture2D floortexture = Content.Load<Texture2D>("castleMID");
             Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
-            Texture2D ladderTexture = Content.Load<Texture2D>("ladder_Mid");
 
+
+            //Menu textures
+            Texture2D azerty = Content.Load<Texture2D>("azerty");
+            Texture2D qwerty = Content.Load<Texture2D>("qwerty");
+
+            IsMouseVisible = true;
+
+            btnAzerty = new Menu(azerty);
+            btnAzerty.pos(new Vector2(250, 325));
+
+            btnQwerty = new Menu(qwerty);
+            btnQwerty.pos(new Vector2(750, 325));
+
+            pausedTexture = Content.Load<Texture2D>("Paused");
+            pausedRectangle = new Rectangle(340, 160, 150, 150);
+
+            btnQuit = new Menu(Content.Load<Texture2D>("Quit"));
+            btnQuit.pos(new Vector2(graphics.PreferredBackBufferWidth - 125, graphics.PreferredBackBufferHeight - 75));
+            //tempcode for testing
             level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture);
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
@@ -100,13 +138,43 @@ namespace Luyks.Jonas
                 Exit();
 
             // TODO: Add your update logic here
-            level.IssueCommands();
-            player.Update(gameTime);
-            camera.Update(player.Position, level.Width, level.Height);
-            foreach (Enemy enemy in level.Enemies)
+
+            MouseState mouse = Mouse.GetState();
+
+            switch (gameState)
             {
-                enemy.Update(gameTime);
+                case GameState.MainMenu:
+                    if (btnAzerty.click == true)
+                    {
+                        player.Controls = new ControlsZQSD();
+                        gameState = GameState.Game;
+                    }
+                    if (btnQwerty.click == true)
+                    {
+                        player.Controls = new ControlsWASD();
+                        gameState = GameState.Game;
+                    }
+                    btnAzerty.Update(mouse);
+                    btnQwerty.Update(mouse);
+                    break;
+                case GameState.Game:
+                    IsMouseVisible = false;
+                    level.IssueCommands();
+
+                    player.Update(gameTime);
+                    if (player.CheckDeath(level.Enemies))
+                    {
+                        Exit();
+                    }
+
+                    camera.Update(player.Position, level.Width, level.Height);
+                    foreach (Enemy enemy in level.Enemies)
+                    {
+                        enemy.Update(gameTime);
+                    }
+                    break;
             }
+
 
             base.Update(gameTime);
         }
@@ -120,10 +188,21 @@ namespace Luyks.Jonas
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
 
-            level.Draw(spriteBatch);
-            player.Draw(spriteBatch);
+            switch (gameState)
+            {
+                case GameState.MainMenu:
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(Content.Load<Texture2D>("keyboardlayout"), new Rectangle(graphics.PreferredBackBufferWidth / 2 - 200, 200, 400, 75), Color.White);
+                    btnAzerty.Draw(spriteBatch);
+                    btnQwerty.Draw(spriteBatch);
+                    break;
+                case GameState.Game:
+                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
+                    level.Draw(spriteBatch);
+                    player.Draw(spriteBatch);
+                    break;
+            }
 
             spriteBatch.End();
 

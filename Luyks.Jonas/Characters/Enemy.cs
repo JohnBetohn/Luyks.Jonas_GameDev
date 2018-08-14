@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Luyks.Jonas
 {
-    class Enemy : Character
+    public class Enemy : Character
     {
         public Vector2[] Destinations { get; set; }
         //public Node Current {get; set; }

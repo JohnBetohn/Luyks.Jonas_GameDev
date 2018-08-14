@@ -16,6 +16,7 @@ namespace Luyks.Jonas
         public bool HasCollRight { get; set; }
         public bool HasCollBot { get; set; }
         public bool HasCollTop { get; set; }
+
         public CollisionManager(List<Rectangle> collisionRectangles, List<Ladder> ladders)
         {
             CollisionRectangles = collisionRectangles;
@@ -129,5 +130,16 @@ namespace Luyks.Jonas
             HasCollTop = false;
         }
 
+        public bool CheckCollisionEnemy(Rectangle OwnCollRect, List<Enemy> Enemies)
+        {
+            foreach (Enemy enemy in Enemies)
+            {
+                if (OwnCollRect.Intersects(enemy.CollisionRectangle))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

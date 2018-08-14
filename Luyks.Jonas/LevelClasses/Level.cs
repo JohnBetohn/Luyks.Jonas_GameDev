@@ -173,12 +173,12 @@ namespace Luyks.Jonas
                 else if (destination.X < Enemies[i].Position.X)
                 {
                     Enemies[i].Controls.walkLeft = true;
-                    Debug.WriteLine("I,m trying to go LEFT");
+                    //Debug.WriteLine("I,m trying to go LEFT");
                 }
                 else
                 {
                     Enemies[i].Controls.walkRight = true;
-                    Debug.WriteLine("I,m trying to go RIGHT");
+                    //Debug.WriteLine("I,m trying to go RIGHT");
                 }
             }
             //else if (destination.Y < Enemies[i].Position.Y)
