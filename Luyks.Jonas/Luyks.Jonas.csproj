@@ -52,6 +52,7 @@
     <Compile Include="Controls.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="LevelClasses\Door.cs" />
+    <Compile Include="LevelClasses\Flag.cs" />
     <Compile Include="LevelClasses\Key.cs" />
     <Compile Include="LevelClasses\Ladder.cs" />
     <Compile Include="LevelClasses\Level.cs" />

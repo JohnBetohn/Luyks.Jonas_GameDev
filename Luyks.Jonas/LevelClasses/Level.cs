@@ -30,6 +30,7 @@ namespace Luyks.Jonas
         private Texture2D doorTexture;
         private Texture2D starTexture;
         private Texture2D toiletTexture;
+        private Texture2D flagTexture;
 
         private List<Block> blocks = new List<Block>();
 
@@ -66,6 +67,7 @@ namespace Luyks.Jonas
 
         public Toilet Goal { get; set; }
         public Key key { get; set; }
+        public Flag Flag { get; set; }
         public bool KeyCollected { get; set; }
         public bool GoalReached { get; set; }
         public bool Finished { get; set; }
@@ -102,6 +104,10 @@ namespace Luyks.Jonas
             {
                 key.Draw(spritebatch);
             }
+            if (GoalReached)
+            {
+                Flag.Draw(spritebatch);
+            }
         }
 
         public List<Rectangle> GetLevelCollision()
@@ -118,7 +124,7 @@ namespace Luyks.Jonas
             return Collision;
         }
 
-        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture, Texture2D keyTexture, Texture2D doorTextureTop, Texture2D doorTexture, Texture2D starTexture, Texture2D toiletTexture)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture, Texture2D keyTexture, Texture2D doorTextureTop, Texture2D doorTexture, Texture2D starTexture, Texture2D toiletTexture, Texture2D flagTexture)
         {
             switch (x)
             {
@@ -138,7 +144,6 @@ namespace Luyks.Jonas
             KeyCollected = false;
             GoalReached = false;
             Finished = false;
-            //collisionManagers need to be reset here
             EnemyTexture = enemyTexture;
 
             this.WallTexture = WallTexture;
@@ -149,6 +154,7 @@ namespace Luyks.Jonas
             this.doorTexture = doorTexture;
             this.starTexture = starTexture;
             this.toiletTexture = toiletTexture;
+            this.flagTexture = flagTexture;
 
             LoadMap();
             Width = ActiveMap.Map.GetLength(1) * 50;
@@ -256,6 +262,12 @@ namespace Luyks.Jonas
                                 Doors.Add(Door);
                             }
                             break;
+                        case 8:
+                            Flag = new Flag(new Vector2(j * 50, i * 50))
+                            {
+                                Texture = flagTexture
+                            };
+                            break;
                     }
                 }
             }
@@ -283,33 +295,23 @@ namespace Luyks.Jonas
         {
             Vector2 destination = Enemies[i].Destinations[Enemies[i].CurrentDestination];
             Enemies[i].Controls.ResetMove();
-            if (/*destination.Y == Enemies[i].Position.Y*/ true)
+            if(destination.X == Enemies[i].Position.X)
             {
-                if(destination.X == Enemies[i].Position.X)
+                Enemies[i].NextDestination();
+            }
+            else if (destination.X < Enemies[i].Position.X)
+            {
+                Enemies[i].Controls.walkLeft = true;
+                if (GoalReached)
                 {
-                    Enemies[i].NextDestination();
-                }
-                else if (destination.X < Enemies[i].Position.X)
-                {
-                    Enemies[i].Controls.walkLeft = true;
-                    //Debug.WriteLine("I,m trying to go LEFT");
-                }
-                else
-                {
-                    Enemies[i].Controls.walkRight = true;
-                    //Debug.WriteLine("I,m trying to go RIGHT");
+                    Enemies[i].WalkSpeedx = 2;
                 }
             }
-            //else if (destination.Y < Enemies[i].Position.Y)
-            //{
-            //    Enemies[i].Controls.Down = true;
-            //    Debug.WriteLine("I,m trying to go DOWN");
-            //}
-            //else if (destination.Y > Enemies[i].Position.Y)
-            //{
-            //    Enemies[i].Controls.Up = true;
-            //    Debug.WriteLine("I,m trying to go UP");
-            //}
+            else
+            {
+                Enemies[i].Controls.walkRight = true;
+                //Debug.WriteLine("I,m trying to go RIGHT");
+            }
 
             #region Remnant of pathfinding code
             //if (FindFastestPathTo(enemy.CurrentDestination, enemy.CurrentNode, enemy))

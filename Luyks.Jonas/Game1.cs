@@ -27,16 +27,19 @@ namespace Luyks.Jonas
 
         //Menu
         private GameState gameState = GameState.MainMenu;
-        private Menu btnStart, btnQuit, btnQwerty, btnAzerty;
+        private Menu btnQuit, btnQwerty, btnAzerty;
 
         private Texture2D pausedTexture;
         private Rectangle pausedRectangle;
+
+        private SpriteFont scoreFont;
 
         private Level level = new Level();
 
         private CollisionManager collisionManager;
 
-        private double timesinceKey = 0;
+        private int starsTotal = 0;
+        private int starsCollected = 0;
 
         public Game1()
         {
@@ -99,6 +102,12 @@ namespace Luyks.Jonas
             //Toilet texture
             Texture2D toiletTexture = Content.Load<Texture2D>("toilet");
 
+            //Flag texture
+            Texture2D flagTexture = Content.Load<Texture2D>("flagRed");
+
+            //font
+            scoreFont = Content.Load<SpriteFont>("Score");
+
             IsMouseVisible = true;
 
             btnAzerty = new Menu(azerty);
@@ -116,7 +125,8 @@ namespace Luyks.Jonas
 
             //tempcode for testing
             //this needs to be done more elegantly
-            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture);
+            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture);
+            starsTotal = level.Stars.Count;
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
             foreach (Enemy enemy in level.Enemies)
@@ -182,12 +192,35 @@ namespace Luyks.Jonas
                         player.Position = new Vector2(70, 100);
                     }
 
-                    if (player.CheckKey(level.key))
+                    if (player.CheckItem(level.key))
                     {
                         level.KeyCollected = true;
                         level.LoadMap();
                         collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
                         player.CollManager = collisionManager;
+                    }
+
+                    for (int i = 0; i < level.Stars.Count; i++)
+                    {
+                        Star star = level.Stars[i];
+                        if (player.CheckItem(star))
+                        {
+                            level.Stars.Remove(star);
+                            starsCollected++;
+                        }
+                    }
+
+                    if (player.CheckItem(level.Goal))
+                    {
+                        foreach (Enemy enemy in level.Enemies)
+                        {
+                            level.GoalReached = true;
+                        }
+                    }
+
+                    if (player.CheckItem(level.Flag))
+                    {
+                        NextLevel();
                     }
 
                     camera.Update(player.Position, level.Width, level.Height);
@@ -224,12 +257,50 @@ namespace Luyks.Jonas
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
                     level.Draw(spriteBatch);
                     player.Draw(spriteBatch);
+                    spriteBatch.DrawString(scoreFont, "Stars left tot collect: " + (starsTotal - starsCollected), new Vector2(camera.Centre.X - (graphics.PreferredBackBufferWidth / 2), camera.Centre.Y - (graphics.PreferredBackBufferHeight / 2)), Color.Black);
                     break;
             }
 
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        protected void NextLevel()
+        {
+            Texture2D enemyTexture = Content.Load<Texture2D>("Enemy");
+
+            Texture2D ladderTexture = Content.Load<Texture2D>("ladder_mid");
+
+            //level1 textures
+            Texture2D floortexture = Content.Load<Texture2D>("castleMID");
+            Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
+
+            //Key texture
+            Texture2D keyTexture = Content.Load<Texture2D>("keyYellow");
+
+            //Door textures
+            Texture2D doorTextureTop = Content.Load<Texture2D>("door_closedTop");
+            Texture2D doorTexture = Content.Load<Texture2D>("door_closedMid");
+
+            //Star texture
+            Texture2D starTexture = Content.Load<Texture2D>("star");
+
+            //Toilet texture
+            Texture2D toiletTexture = Content.Load<Texture2D>("toilet");
+
+            //Flag texture
+            Texture2D flagTexture = Content.Load<Texture2D>("flagRed");
+
+            level.SetActiveMap(1, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture);
+            starsTotal = level.Stars.Count;
+            starsCollected = 0;
+            collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
+            player.CollManager = collisionManager;
+            foreach (Enemy enemy in level.Enemies)
+            {
+                enemy.CollManager = collisionManager;
+            }
         }
     }
 }

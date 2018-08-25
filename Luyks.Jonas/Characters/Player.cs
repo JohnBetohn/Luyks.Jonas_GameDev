@@ -33,11 +33,11 @@ namespace Luyks.Jonas
             return false;
         }
 
-        public bool CheckKey(Key key)
+        public bool CheckItem(LevelAsset levelAsset)
         {
-            if (key != null)
+            if (levelAsset != null)
             {
-                if (CollManager.CheckCollisionKey(CollisionRectangle, key.CollisionRectangle))
+                if (CollManager.CheckCollisionKey(CollisionRectangle, levelAsset.CollisionRectangle))
                 {
                     Debug.WriteLine("Key Collected");
                     return true;
