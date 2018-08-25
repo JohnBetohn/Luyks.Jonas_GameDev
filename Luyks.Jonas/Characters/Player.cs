@@ -33,6 +33,20 @@ namespace Luyks.Jonas
             return false;
         }
 
+        public bool CheckKey(Key key)
+        {
+            if (key != null)
+            {
+                if (CollManager.CheckCollisionKey(CollisionRectangle, key.CollisionRectangle))
+                {
+                    Debug.WriteLine("Key Collected");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         #endregion
 
         public Player(Vector2 position, int layout)

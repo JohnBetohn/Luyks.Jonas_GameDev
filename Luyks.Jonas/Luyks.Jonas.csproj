@@ -51,13 +51,17 @@
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="LevelClasses\Door.cs" />
+    <Compile Include="LevelClasses\Key.cs" />
     <Compile Include="LevelClasses\Ladder.cs" />
     <Compile Include="LevelClasses\Level.cs" />
     <Compile Include="LevelClasses\LevelAsset.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="LevelClasses\Map.cs" />
     <Compile Include="LevelClasses\Node.cs" />
+    <Compile Include="LevelClasses\Star.cs" />
     <Compile Include="LevelClasses\TileMap.cs" />
+    <Compile Include="LevelClasses\Toilet.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

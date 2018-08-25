@@ -21,6 +21,16 @@ namespace Luyks.Jonas
         public int Width { get; set; }
         public int Height { get; set; }
 
+        private Texture2D WallTexture;
+        private Texture2D FloorTexture;
+        private Texture2D LadderTexture;
+        private Texture2D enemyTexture;
+        private Texture2D keyTexture;
+        private Texture2D doorTextureTop;
+        private Texture2D doorTexture;
+        private Texture2D starTexture;
+        private Texture2D toiletTexture;
+
         private List<Block> blocks = new List<Block>();
 
         public List<Block> Blocks
@@ -36,6 +46,27 @@ namespace Luyks.Jonas
             get { return ladders; }
             set { ladders = value; }
         }
+
+        private List<Star> stars = new List<Star>();
+
+        public List<Star> Stars
+        {
+            get { return stars; }
+            set { stars = value; }
+        }
+
+        private List<Door> doors = new List<Door>();
+
+        public List<Door> Doors
+        {
+            get { return doors; }
+            set { doors = value; }
+        }
+
+
+        public Toilet Goal { get; set; }
+        public Key key { get; set; }
+        public bool KeyCollected { get; set; }
         public bool GoalReached { get; set; }
         public bool Finished { get; set; }
 
@@ -58,6 +89,19 @@ namespace Luyks.Jonas
             {
                 enemy.Draw(spritebatch);
             }
+            foreach (Door door in Doors)
+            {
+                door.Draw(spritebatch);
+            }
+            foreach (Star star in Stars)
+            {
+                star.Draw(spritebatch);
+            }
+            Goal.Draw(spritebatch);
+            if (key != null)
+            {
+                key.Draw(spritebatch);
+            }
         }
 
         public List<Rectangle> GetLevelCollision()
@@ -67,10 +111,14 @@ namespace Luyks.Jonas
             {
                 Collision.Add(Blocks[i].CollisionRectangle);
             }
+            foreach (Door door in Doors)
+            {
+                Collision.Add(door.CollisionRectangle);
+            }
             return Collision;
         }
 
-        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture, Texture2D keyTexture, Texture2D doorTextureTop, Texture2D doorTexture, Texture2D starTexture, Texture2D toiletTexture)
         {
             switch (x)
             {
@@ -87,16 +135,40 @@ namespace Luyks.Jonas
             Blocks = new List<Block>();
             Ladders = new List<Ladder>();
             Nodes = new List<Node>();
+            KeyCollected = false;
+            GoalReached = false;
+            Finished = false;
+            //collisionManagers need to be reset here
             EnemyTexture = enemyTexture;
-            LoadMap(WallTexture, FloorTexture, LadderTexture, EnemyTexture);
+
+            this.WallTexture = WallTexture;
+            this.FloorTexture = FloorTexture;
+            this.LadderTexture = LadderTexture;
+            this.keyTexture = keyTexture;
+            this.doorTextureTop = doorTextureTop;
+            this.doorTexture = doorTexture;
+            this.starTexture = starTexture;
+            this.toiletTexture = toiletTexture;
+
+            LoadMap();
             Width = ActiveMap.Map.GetLength(1) * 50;
             Height = ActiveMap.Map.GetLength(0) * 50;
         }
 
-        public void LoadMap(Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D EnemyTexture)
+        public void LoadMap()
         {
+            Blocks = new List<Block>();
+            Ladders = new List<Ladder>();
+            Doors = new List<Door>();
+            Nodes = new List<Node>();
+            Stars = new List<Star>();
+            key = null;
             Block Block;
             Ladder Ladder;
+            Toilet Toilet;
+            Star Star;
+            Door Door;
+            Key Key;
             Node Node;
             for (int i = 0; i < ActiveMap.Map.GetLength(0); i++)
             {
@@ -112,7 +184,7 @@ namespace Luyks.Jonas
                             if (i == 0)
                             {
                                 Block.Texture = FloorTexture;
-                            } else if (ActiveMap.Map[i - 1, j] == 0)
+                            } else if (ActiveMap.Map[i - 1, j] != 1)
                             {
                                 Block.Texture = FloorTexture;
                                 Node = new Node(new Vector2(j * 50, (i - 1) * 50));
@@ -135,6 +207,53 @@ namespace Luyks.Jonas
                             {
                                 Node = new Node(new Vector2(j * 50, (i - 1) * 50));
                                 Nodes.Add(Node);
+                            }
+                            break;
+                        case 3: //toilet
+                            Toilet = new Toilet(new Vector2(j * 50, i * 50))
+                            {
+                                Texture = toiletTexture
+                            };
+                            Goal = Toilet;
+                            break;
+                        case 4: //end
+
+                            break;
+                        case 5: //key
+                            if (!KeyCollected)
+                            {
+                                Key = new Key(new Vector2(j * 50, i * 50))
+                                {
+                                    Texture = keyTexture
+                                };
+                                key = Key;
+                            }
+                            break;
+                        case 6: //star
+                            Star = new Star(new Vector2(j * 50, i * 50))
+                            {
+                                Texture = starTexture
+                            };
+                            Stars.Add(Star);
+                            break;
+                        case 7: //door
+                            if (!KeyCollected)
+                            {
+                                if (ActiveMap.Map[i + 1, j] == 7)
+                                {
+                                    Door = new Door(new Vector2(j * 50, i * 50))
+                                    {
+                                        Texture = doorTextureTop
+                                    };
+                                }
+                                else
+                                {
+                                    Door = new Door(new Vector2(j * 50, i * 50))
+                                    {
+                                        Texture = doorTexture
+                                    };
+                                }
+                                Doors.Add(Door);
                             }
                             break;
                     }

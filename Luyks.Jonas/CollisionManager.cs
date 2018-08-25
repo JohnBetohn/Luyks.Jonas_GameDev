@@ -141,5 +141,17 @@ namespace Luyks.Jonas
             }
             return false;
         }
+
+        public bool CheckCollisionKey(Rectangle PlayerRect, Rectangle KeyRect)
+        {
+            if (KeyRect != null)
+            {
+                if (PlayerRect.Intersects(KeyRect))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

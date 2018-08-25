@@ -29,15 +29,14 @@ namespace Luyks.Jonas
         private GameState gameState = GameState.MainMenu;
         private Menu btnStart, btnQuit, btnQwerty, btnAzerty;
 
-        private bool qwerty = false;
-        private bool paused = false;
         private Texture2D pausedTexture;
-        private SpriteFont font;
         private Rectangle pausedRectangle;
 
         private Level level = new Level();
 
         private CollisionManager collisionManager;
+
+        private double timesinceKey = 0;
 
         public Game1()
         {
@@ -87,6 +86,19 @@ namespace Luyks.Jonas
             Texture2D azerty = Content.Load<Texture2D>("azerty");
             Texture2D qwerty = Content.Load<Texture2D>("qwerty");
 
+            //Key texture
+            Texture2D keyTexture = Content.Load<Texture2D>("keyYellow");
+
+            //Door textures
+            Texture2D doorTextureTop = Content.Load<Texture2D>("door_closedTop");
+            Texture2D doorTexture = Content.Load<Texture2D>("door_closedMid");
+
+            //Star texture
+            Texture2D starTexture = Content.Load<Texture2D>("star");
+
+            //Toilet texture
+            Texture2D toiletTexture = Content.Load<Texture2D>("toilet");
+
             IsMouseVisible = true;
 
             btnAzerty = new Menu(azerty);
@@ -100,8 +112,11 @@ namespace Luyks.Jonas
 
             btnQuit = new Menu(Content.Load<Texture2D>("Quit"));
             btnQuit.pos(new Vector2(graphics.PreferredBackBufferWidth - 125, graphics.PreferredBackBufferHeight - 75));
+
+
             //tempcode for testing
-            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture);
+            //this needs to be done more elegantly
+            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture);
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
             foreach (Enemy enemy in level.Enemies)
@@ -164,7 +179,15 @@ namespace Luyks.Jonas
                     player.Update(gameTime);
                     if (player.CheckDeath(level.Enemies))
                     {
-                        Exit();
+                        player.Position = new Vector2(70, 100);
+                    }
+
+                    if (player.CheckKey(level.key))
+                    {
+                        level.KeyCollected = true;
+                        level.LoadMap();
+                        collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
+                        player.CollManager = collisionManager;
                     }
 
                     camera.Update(player.Position, level.Width, level.Height);
@@ -185,7 +208,7 @@ namespace Luyks.Jonas
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(94, 129, 162));
 
             // TODO: Add your drawing code here
 
