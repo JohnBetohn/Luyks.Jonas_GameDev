@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -18,25 +19,34 @@ namespace Luyks.Jonas
         //Initialize Objects
         Player player;
         Camera2D camera;
+        List<SoundEffect> soundEffects;
 
         enum GameState
         {
             MainMenu,
-            Game
+            Game,
+            GameOver,
+            Finished
         }
 
         //Menu
         private GameState gameState = GameState.MainMenu;
         private Menu btnQuit, btnQwerty, btnAzerty;
 
+        private Texture2D gameOver;
         private Texture2D pausedTexture;
         private Rectangle pausedRectangle;
+        private Texture2D end;
 
         private SpriteFont scoreFont;
 
         private Level level = new Level();
 
         private CollisionManager collisionManager;
+
+        private int lives = 5;
+        private Vector2 Respawn;
+        private bool levelCompleted;
 
         private int starsTotal = 0;
         private int starsCollected = 0;
@@ -58,8 +68,10 @@ namespace Luyks.Jonas
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player = new Player(new Vector2(70, 100), 0);
+            player = new Player(new Vector2(70, 500), 0); //y = 500 in level 1
+            Respawn = player.Position;
             camera = new Camera2D(GraphicsDevice.Viewport);
+            soundEffects = new List<SoundEffect>();
 
             base.Initialize();
         }
@@ -83,11 +95,13 @@ namespace Luyks.Jonas
             //level1 textures
             Texture2D floortexture = Content.Load<Texture2D>("castleMID");
             Texture2D walltexture = Content.Load<Texture2D>("castleCenter");
-
+            Texture2D fenceTexture = Content.Load<Texture2D>("fence");
 
             //Menu textures
             Texture2D azerty = Content.Load<Texture2D>("azerty");
             Texture2D qwerty = Content.Load<Texture2D>("qwerty");
+            gameOver = Content.Load<Texture2D>("game-over");
+            end = Content.Load<Texture2D>("end");
 
             //Key texture
             Texture2D keyTexture = Content.Load<Texture2D>("keyYellow");
@@ -108,6 +122,10 @@ namespace Luyks.Jonas
             //font
             scoreFont = Content.Load<SpriteFont>("Score");
 
+            //soundeffects
+            soundEffects.Add(Content.Load<SoundEffect>("Toiletflush"));
+            soundEffects.Add(Content.Load<SoundEffect>("tada"));
+
             IsMouseVisible = true;
 
             btnAzerty = new Menu(azerty);
@@ -125,7 +143,7 @@ namespace Luyks.Jonas
 
             //tempcode for testing
             //this needs to be done more elegantly
-            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture);
+            level.SetActiveMap(0, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture, fenceTexture);
             starsTotal = level.Stars.Count;
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
@@ -161,7 +179,6 @@ namespace Luyks.Jonas
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
             // TODO: Add your update logic here
 
             MouseState mouse = Mouse.GetState();
@@ -181,20 +198,40 @@ namespace Luyks.Jonas
                     }
                     btnAzerty.Update(mouse);
                     btnQwerty.Update(mouse);
+
+                    if (Keyboard.GetState().IsKeyDown(Keys.E))
+                    {
+                        gameState = GameState.Finished;
+                    }
+
                     break;
                 case GameState.Game:
                     IsMouseVisible = false;
+
+                    if (Keyboard.GetState().IsKeyDown(Keys.F2))
+                    {
+                        lives = 5;
+                        NextLevel(0);
+                    }
+
                     level.IssueCommands();
 
                     player.Update(gameTime);
                     if (player.CheckDeath(level.Enemies))
                     {
-                        player.Position = new Vector2(70, 100);
+                        if (lives == 0)
+                        {
+                            gameState = GameState.GameOver;
+                        }
+                        lives--;
+                        player.Position = Respawn;
+
                     }
 
                     if (player.CheckItem(level.key))
                     {
                         level.KeyCollected = true;
+                        Respawn = level.key.Position;
                         level.LoadMap();
                         collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
                         player.CollManager = collisionManager;
@@ -210,23 +247,47 @@ namespace Luyks.Jonas
                         }
                     }
 
-                    if (player.CheckItem(level.Goal))
+                    if (player.CheckItem(level.Goal) && !level.GoalReached)
                     {
-                        foreach (Enemy enemy in level.Enemies)
-                        {
-                            level.GoalReached = true;
-                        }
+                        level.GoalReached = true;
+                        soundEffects[0].CreateInstance().Play();
+                        Respawn = level.Goal.Position;
                     }
 
-                    if (player.CheckItem(level.Flag))
+                    if (player.CheckItem(level.Flag) && level.GoalReached)
                     {
-                        NextLevel();
+                        if (starsCollected == starsTotal)
+                        {
+                            lives = lives + 5;
+                        }
+                        if (!levelCompleted)
+                        {
+                            NextLevel(1);
+                            levelCompleted = true;
+                        }
+                        else
+                        {
+                            gameState = GameState.Finished;
+                        }
+                        soundEffects[1].CreateInstance().Play();
                     }
 
                     camera.Update(player.Position, level.Width, level.Height);
                     foreach (Enemy enemy in level.Enemies)
                     {
                         enemy.Update(gameTime);
+                        if (level.GoalReached && ((enemy.Position.X % 2) == 0))
+                        {
+                            enemy.WalkSpeedx = 2;
+                        }
+                    }
+                    break;
+                case GameState.GameOver:
+                    if (Keyboard.GetState().IsKeyDown(Keys.F2))
+                    {
+                        lives = 5;
+                        levelCompleted = false;
+                        NextLevel(0);
                     }
                     break;
             }
@@ -257,7 +318,16 @@ namespace Luyks.Jonas
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, camera.Transform);
                     level.Draw(spriteBatch);
                     player.Draw(spriteBatch);
-                    spriteBatch.DrawString(scoreFont, "Stars left tot collect: " + (starsTotal - starsCollected), new Vector2(camera.Centre.X - (graphics.PreferredBackBufferWidth / 2), camera.Centre.Y - (graphics.PreferredBackBufferHeight / 2)), Color.Black);
+                    spriteBatch.DrawString(scoreFont, "Stars left to collect: " + (starsTotal - starsCollected), new Vector2(camera.Centre.X - (graphics.PreferredBackBufferWidth / 2), camera.Centre.Y - (graphics.PreferredBackBufferHeight / 2)), Color.Black);
+                    spriteBatch.DrawString(scoreFont, "Lives left: " + lives, new Vector2(camera.Centre.X - (graphics.PreferredBackBufferWidth / 2), camera.Centre.Y - ((graphics.PreferredBackBufferHeight / 2) - 30)), Color.Black);
+                    break;
+                case GameState.GameOver:
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(gameOver, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                    break;
+                case GameState.Finished:
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(texture: end, position: new Vector2((float)graphics.PreferredBackBufferWidth/2 - 250, (float)graphics.PreferredBackBufferHeight/2 - 250), color: Color.White, scale: new Vector2((float)5, (float)5));
                     break;
             }
 
@@ -266,7 +336,7 @@ namespace Luyks.Jonas
             base.Draw(gameTime);
         }
 
-        protected void NextLevel()
+        protected void NextLevel(int i)
         {
             Texture2D enemyTexture = Content.Load<Texture2D>("Enemy");
 
@@ -282,6 +352,7 @@ namespace Luyks.Jonas
             //Door textures
             Texture2D doorTextureTop = Content.Load<Texture2D>("door_closedTop");
             Texture2D doorTexture = Content.Load<Texture2D>("door_closedMid");
+            Texture2D fenceTexture = Content.Load<Texture2D>("fence");
 
             //Star texture
             Texture2D starTexture = Content.Load<Texture2D>("star");
@@ -292,11 +363,20 @@ namespace Luyks.Jonas
             //Flag texture
             Texture2D flagTexture = Content.Load<Texture2D>("flagRed");
 
-            level.SetActiveMap(1, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture);
+            level.SetActiveMap(i, walltexture, floortexture, ladderTexture, enemyTexture, keyTexture, doorTextureTop, doorTexture, starTexture, toiletTexture, flagTexture, fenceTexture);
             starsTotal = level.Stars.Count;
             starsCollected = 0;
             collisionManager = new CollisionManager(level.GetLevelCollision(), level.Ladders);
             player.CollManager = collisionManager;
+            if (i == 1)
+            {
+                Respawn = new Vector2(70, 950);
+            }
+            if (i == 0)
+            {
+                Respawn = new Vector2(70, 500);
+            }
+            player.Position = Respawn;
             foreach (Enemy enemy in level.Enemies)
             {
                 enemy.CollManager = collisionManager;

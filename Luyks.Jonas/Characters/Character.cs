@@ -121,7 +121,7 @@ namespace Luyks.Jonas
 
             if (Controls.Jump && !Controls.Falling && SpeedY >= 0)      // Jump only when you are not in the air
             {
-                SpeedY = -15;
+                SpeedY = -17;
                 position.Y = position.Y + SpeedY;
             }
 

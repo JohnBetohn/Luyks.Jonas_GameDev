@@ -31,6 +31,7 @@ namespace Luyks.Jonas
         private Texture2D starTexture;
         private Texture2D toiletTexture;
         private Texture2D flagTexture;
+        private Texture2D fenceTexture;
 
         private List<Block> blocks = new List<Block>();
 
@@ -62,6 +63,14 @@ namespace Luyks.Jonas
         {
             get { return doors; }
             set { doors = value; }
+        }
+
+        private List<Block> fences;
+
+        public List<Block> Fences
+        {
+            get { return fences; }
+            set { fences = value; }
         }
 
 
@@ -99,6 +108,10 @@ namespace Luyks.Jonas
             {
                 star.Draw(spritebatch);
             }
+            foreach (Block fence in Fences)
+            {
+                fence.Draw(spritebatch);
+            }
             Goal.Draw(spritebatch);
             if (key != null)
             {
@@ -124,7 +137,7 @@ namespace Luyks.Jonas
             return Collision;
         }
 
-        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture, Texture2D keyTexture, Texture2D doorTextureTop, Texture2D doorTexture, Texture2D starTexture, Texture2D toiletTexture, Texture2D flagTexture)
+        public void SetActiveMap(int x, Texture2D WallTexture, Texture2D FloorTexture, Texture2D LadderTexture, Texture2D enemyTexture, Texture2D keyTexture, Texture2D doorTextureTop, Texture2D doorTexture, Texture2D starTexture, Texture2D toiletTexture, Texture2D flagTexture, Texture2D fenceTexture)
         {
             switch (x)
             {
@@ -140,6 +153,7 @@ namespace Luyks.Jonas
             }
             Blocks = new List<Block>();
             Ladders = new List<Ladder>();
+            Fences = new List<Block>();
             Nodes = new List<Node>();
             KeyCollected = false;
             GoalReached = false;
@@ -155,6 +169,7 @@ namespace Luyks.Jonas
             this.starTexture = starTexture;
             this.toiletTexture = toiletTexture;
             this.flagTexture = flagTexture;
+            this.fenceTexture = fenceTexture;
 
             LoadMap();
             Width = ActiveMap.Map.GetLength(1) * 50;
@@ -167,7 +182,10 @@ namespace Luyks.Jonas
             Ladders = new List<Ladder>();
             Doors = new List<Door>();
             Nodes = new List<Node>();
-            Stars = new List<Star>();
+            if (!KeyCollected)
+            {
+                stars = new List<Star>();
+            }
             key = null;
             Block Block;
             Ladder Ladder;
@@ -175,6 +193,7 @@ namespace Luyks.Jonas
             Star Star;
             Door Door;
             Key Key;
+            Block Fence;
             Node Node;
             for (int i = 0; i < ActiveMap.Map.GetLength(0); i++)
             {
@@ -236,11 +255,14 @@ namespace Luyks.Jonas
                             }
                             break;
                         case 6: //star
-                            Star = new Star(new Vector2(j * 50, i * 50))
+                            if (!KeyCollected)
                             {
-                                Texture = starTexture
-                            };
-                            Stars.Add(Star);
+                                Star = new Star(new Vector2(j * 50, i * 50))
+                                {
+                                    Texture = starTexture
+                                };
+                                Stars.Add(Star);
+                            }
                             break;
                         case 7: //door
                             if (!KeyCollected)
@@ -267,6 +289,13 @@ namespace Luyks.Jonas
                             {
                                 Texture = flagTexture
                             };
+                            break;
+                        case 9:
+                            Fence = new Block(new Vector2(j * 50, i * 50))
+                            {
+                                Texture = fenceTexture
+                            };
+                            Fences.Add(Fence);
                             break;
                     }
                 }
@@ -302,15 +331,10 @@ namespace Luyks.Jonas
             else if (destination.X < Enemies[i].Position.X)
             {
                 Enemies[i].Controls.walkLeft = true;
-                if (GoalReached)
-                {
-                    Enemies[i].WalkSpeedx = 2;
-                }
             }
             else
             {
                 Enemies[i].Controls.walkRight = true;
-                //Debug.WriteLine("I,m trying to go RIGHT");
             }
 
             #region Remnant of pathfinding code
